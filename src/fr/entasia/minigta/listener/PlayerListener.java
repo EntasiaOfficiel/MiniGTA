@@ -26,7 +26,7 @@ public class PlayerListener implements Listener {
 
 
 	@EventHandler
-	public void WorldChange(PlayerChangedWorldEvent e){ // TODO : est-ce que le WorldChange s'éxecute si le TP est cancel ?
+	public void WorldChange(PlayerChangedWorldEvent e){
 		if(e.getFrom()==Main.instance.world) {
 			if (Main.instance.pList.containsKey(e.getPlayer().getName())) {
 				if (Main.instance.state == GState.ENDING) return;

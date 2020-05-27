@@ -256,7 +256,6 @@ public class Main extends JavaPlugin {
 					gp2.p.setLevel(0);
 				}
 				state=GState.WAITING;
-				return;
 			}
 
 		}
