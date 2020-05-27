@@ -1,0 +1,18 @@
+position:
+  spawn:
+    points:
+      - '923,179,924'
+      - '769,184,930'
+      - '884,141,873'
+      - '829,162,907'
+  world: "minigta"
+  map-number: 2
+  waitpoint: 942.5,156,1197.5
+  startpoint: 942.5,156,1197.5
+
+config:
+  minPlayers: 2
+  coins:
+    egalite: 5
+    win: 8
+    loose: 3

@@ -1,0 +1,10 @@
+name: MiniGta
+version: 1.9.5
+author: Stargeyt et iTrooz_
+main: fr.entasia.minigta.Main
+depend: [EGTools,CrackShot]
+softdepend: [Multiverse-Core]
+commands:
+  minigta:
+  eco:
+    
