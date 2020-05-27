@@ -2,9 +2,9 @@ package fr.entasia.minigta;
 
 import com.shampaggon.crackshot.CSUtility;
 import fr.entasia.apis.ChatComponent;
+import fr.entasia.apis.sql.SQLConnection;
 import fr.entasia.egtools.Utils;
 import fr.entasia.egtools.utils.MoneyUtils;
-import fr.entasia.egtools.utils.SQLConnection;
 import fr.entasia.minigta.listener.*;
 import fr.entasia.minigta.tasks.GAutoStart;
 import fr.entasia.minigta.tasks.GAutoStop;
@@ -64,9 +64,15 @@ public class Main extends JavaPlugin {
 	public List<Location> MineLocation = new ArrayList<>();
 	public List<BreakedBlock> GlassBroke = new ArrayList<>();
 	public int timer = 20;
+	public static SQLConnection sql;
 
 	@Override
 	public void onEnable() {
+		try {
+			sql = new SQLConnection("entagames","playerdata");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		instance = this;
 
 		saveDefaultConfig();
@@ -450,8 +456,8 @@ public class Main extends JavaPlugin {
 			MoneyUtils.addMoney(gp.p.getUniqueId(), n);
 
 			try{
-				SQLConnection.checkConnect();
-				PreparedStatement ps = SQLConnection.connection.prepareStatement("update entagames set gta_kill=gta_kill+?, gta_death=gta_death+? where uuid = ?");
+				sql.checkConnect();
+				PreparedStatement ps = sql.connection.prepareStatement("update entagames set gta_kill=gta_kill+?, gta_death=gta_death+? where uuid = ?");
 				ps.setInt(1, gp.kill);
 				ps.setInt(2, gp.death);
 				ps.setString(3, gp.p.getUniqueId().toString());
