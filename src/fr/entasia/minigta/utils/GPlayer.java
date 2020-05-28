@@ -18,6 +18,7 @@ public class GPlayer {
 	public boolean pack=false;
 	public boolean hasVoted=false;
 	public String vote = "";
+	public boolean noPvp = false;
 
 	public GPlayer(Player p){
 		this.p = p;

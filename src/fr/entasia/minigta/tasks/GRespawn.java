@@ -24,15 +24,8 @@ public class GRespawn extends BukkitRunnable{
 		timer--;
 
 		if(timer==0) {
-			if(Main.instance.BlueTeam.contains(p.getName())){
-				p.teleport(Main.instance.BlueSpawn);
-			}
-			else {
-				p.teleport(Main.instance.RedSpawn);
-			}
-			p.setGameMode(GameMode.SURVIVAL);
-			p.setHealth(p.getMaxHealth());
-			p.setFoodLevel(20);
+			Main.respawn(p);
+
 			cancel();
 
 

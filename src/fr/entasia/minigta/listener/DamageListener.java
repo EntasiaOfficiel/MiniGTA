@@ -7,9 +7,11 @@ import fr.entasia.minigta.Main;
 import fr.entasia.minigta.tasks.FireExtinguishTask;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -96,14 +98,16 @@ public class DamageListener implements Listener {
 					e.setCancelled(true);
 				}else{
 
-					if(victim.p.getTicksLived() <= 100){
+					if(victim.noPvp){
 						e.setCancelled(true);
+						attacker.p.sendMessage(new TextComponent("§7Merci de ne pas spawn kill"));
 						return;
 					}
 					if(victim.p.getHealth()<=e.getDamage()){
 						e.setCancelled(true);
 						Main.instance.eliminate(victim);
 						attacker.kill++;
+						attacker.p.playSound(attacker.p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5,5);
 						if(e.getWeaponTitle().equalsIgnoreCase("Couteau")){
 							Main.instance.sendMsg(ChatComponent.create(victim.getColor()+victim.p.getDisplayName()+"§7 s'est fait poignarder par "+attacker.getColor()+attacker.p.getDisplayName()));
 						} else if(e.getWeaponTitle().equalsIgnoreCase("C4") || e.getWeaponTitle().startsWith("Gre") || e.getWeaponTitle().startsWith("Fumi")){

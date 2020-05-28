@@ -8,6 +8,7 @@ import fr.entasia.egtools.utils.MoneyUtils;
 import fr.entasia.minigta.listener.*;
 import fr.entasia.minigta.tasks.GAutoStart;
 import fr.entasia.minigta.tasks.GAutoStop;
+import fr.entasia.minigta.tasks.GNoPvP;
 import fr.entasia.minigta.tasks.GRespawn;
 import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
@@ -25,6 +26,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -497,6 +499,27 @@ public class Main extends JavaPlugin {
 		BluePoint = 0;
 		RedPoint = 0;
 		state = GState.WAITING;
+
+	}
+
+	public static void respawn(Player p){
+		if(Main.instance.BlueTeam.contains(p.getName())){
+			p.teleport(Main.instance.BlueSpawn);
+		}
+		else {
+			p.teleport(Main.instance.RedSpawn);
+		}
+		p.setGameMode(GameMode.SURVIVAL);
+		p.setHealth(p.getMaxHealth());
+		p.setFoodLevel(20);
+		for(GPlayer gp: Main.instance.pList.values()){
+			if(gp.p.getDisplayName().equalsIgnoreCase(p.getDisplayName())){
+				gp.noPvp=true;
+			}
+		}
+
+		GNoPvP noPvP = new GNoPvP(p);
+		noPvP.runTaskTimer(Main.instance,0,20);
 
 	}
 }
