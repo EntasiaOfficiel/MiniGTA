@@ -10,6 +10,6 @@
     <orderEntry type="library" name="EGTools" level="project" />
     <orderEntry type="library" name="CrackShot" level="project" />
     <orderEntry type="library" name="spigot-1.9.4-2" level="project" />
-    <orderEntry type="library" name="Libraries-deprecated1" level="project" />
+    <orderEntry type="library" name="Libraries" level="project" />
   </component>
 </module>

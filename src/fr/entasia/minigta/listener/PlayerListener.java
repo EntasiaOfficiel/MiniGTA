@@ -62,19 +62,10 @@ public class PlayerListener implements Listener {
 		if(e.getPlayer().getWorld() == Main.instance.world&&
 				Main.instance.pList.containsKey(e.getPlayer().getName()) ){
 				Block b = e.getBlockPlaced();
-				if(b.getType().equals(Material.SKULL)) return;
-				b.setType(Material.AIR);
-				e.setCancelled(true);
+				if(b.getType().equals(Material.SKULL)){
+					e.setCancelled(false);
+				}
 		}
-	}
-
-
-
-
-	
-	@EventHandler
-	public void onBreak(BlockBreakEvent e){
-		if(Main.instance.pList.containsKey(e.getPlayer().getName())) e.setCancelled(true);
 	}
 
 

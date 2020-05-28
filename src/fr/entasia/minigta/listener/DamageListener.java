@@ -85,28 +85,31 @@ public class DamageListener implements Listener {
 	@EventHandler
 	public void weapon(WeaponDamageEntityEvent e) {
 
-//		Bukkit.broadcastMessage("fired for victim "+e.getVictim()+" and attacker "+e.getPlayer());
 		if(e.getVictim() instanceof Player && Main.instance.hasStarted()){
 
 			GPlayer victim = Main.instance.pList.get(e.getVictim().getName());
 			GPlayer attacker = Main.instance.pList.get(e.getPlayer().getName());
 			if(victim!=null&&attacker!=null){
-//				Bukkit.broadcastMessage("ok");
 				if(victim.team.equals(attacker.team)) {
-//					Bukkit.broadcastMessage("same team : cancel");
 					if (attacker != victim) attacker.p.sendMessage("§cVous êtes dans la même équipe !");
 
 					e.setCancelled(true);
 				}else{
-//					Bukkit.broadcastMessage("apply damage of "+e.getDamage()+".       "+victim.p.getHealth());
 
+					if(victim.p.getTicksLived() <= 100){
+						e.setCancelled(true);
+						return;
+					}
 					if(victim.p.getHealth()<=e.getDamage()){
-//						Bukkit.broadcastMessage("death detected");
 						e.setCancelled(true);
 						Main.instance.eliminate(victim);
 						attacker.kill++;
-						if(e.getWeaponTitle().equalsIgnoreCase("Couteau"))
+						if(e.getWeaponTitle().equalsIgnoreCase("Couteau")){
 							Main.instance.sendMsg(ChatComponent.create(victim.getColor()+victim.p.getDisplayName()+"§7 s'est fait poignarder par "+attacker.getColor()+attacker.p.getDisplayName()));
+						} else if(e.getWeaponTitle().equalsIgnoreCase("C4") || e.getWeaponTitle().startsWith("Gre") || e.getWeaponTitle().startsWith("Fumi")){
+							Main.instance.sendMsg(ChatComponent.create(victim.getColor()+victim.p.getDisplayName()+"§7 s'est fait exploser par "+attacker.getColor()+attacker.p.getDisplayName()));
+						}
+
 						else Main.instance.sendMsg(ChatComponent.create(victim.getColor()+victim.p.getDisplayName()+"§7 s'est fait canarder par "+attacker.getColor()+attacker.p.getDisplayName()+"§7 à l'aide d'un " + e.getWeaponTitle()));
 					}
 				}

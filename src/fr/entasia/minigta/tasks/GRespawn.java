@@ -33,8 +33,6 @@ public class GRespawn extends BukkitRunnable{
 			p.setGameMode(GameMode.SURVIVAL);
 			p.setHealth(p.getMaxHealth());
 			p.setFoodLevel(20);
-			PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 5, 100);
-			p.addPotionEffect(effect);
 			cancel();
 
 
