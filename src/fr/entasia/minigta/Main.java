@@ -235,14 +235,12 @@ public class Main extends JavaPlugin {
 			if (RedTeam.size() == 0 || BlueTeam.size() == 0) {
 				GameChrono.cancel();
 				sendMsg(ChatComponent.create("§7La partie à été arretée suite à un nombre insuffisant de joueurs restants"));
-//				if(RedTeam.size() ==0){
-//					BluePoint=100;
-//				} else{
-//					RedPoint=100;
-//				}
 				endGame();
 			}
 		}else if(state==GState.STARTING){
+			for(Map.Entry<Player, CustomScoreboardManager> sign : boards.entrySet()){
+				sign.getKey().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+			}
 			for(Map.Entry<String,Integer> entry: mapVotes.entrySet()){
 				if(entry.getKey().equalsIgnoreCase(gp.vote)){
 					int value = entry.getValue();
@@ -258,6 +256,14 @@ public class Main extends JavaPlugin {
 					gp2.p.setLevel(0);
 				}
 				state=GState.WAITING;
+			}
+			boards.clear();
+			for(GPlayer gplayer : instance.pList.values()){
+				Player p = gplayer.p;
+				CustomScoreboardManager scoreboard = new CustomScoreboardManager(p);
+				scoreboard.sendWaitingLine();
+				scoreboard.set();
+				boards.put(p,scoreboard);
 			}
 
 		}
@@ -349,7 +355,15 @@ public class Main extends JavaPlugin {
 						while(test == 0 || inv.getItem(test) != null) {
 							test = new Random().nextInt(27);
 						}
-						inv.setItem(test, cs.generateWeapon(worldConfig.getString("weapon." + i2 + ".name")));
+						int amount=1;
+						int teste = worldConfig.getInt("weapon."+i2+".amount");
+						if(teste > 0){
+							amount=teste;
+						}
+
+						ItemStack item =cs.generateWeapon(worldConfig.getString("weapon." + i2 + ".name"));
+						item.setAmount(amount);
+						inv.setItem(test, item);
 					}
 				}
 				
@@ -368,7 +382,7 @@ public class Main extends JavaPlugin {
 							}
 							int amount=1;
 							int teste = worldConfig.getInt("weapon."+i2+".amount");
-							if(teste != 0){
+							if(teste > 0){
 								amount=teste;
 							}
 							ItemStack item =cs.generateWeapon(worldConfig.getString("weapon." + i2 + ".name"));
