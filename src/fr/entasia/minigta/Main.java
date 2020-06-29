@@ -1,7 +1,7 @@
 package fr.entasia.minigta;
 
 import com.shampaggon.crackshot.CSUtility;
-import fr.entasia.apis.ChatComponent;
+import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.apis.sql.SQLConnection;
 import fr.entasia.egtools.Utils;
 import fr.entasia.egtools.utils.MoneyUtils;

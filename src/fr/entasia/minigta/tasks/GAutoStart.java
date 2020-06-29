@@ -1,6 +1,6 @@
 package fr.entasia.minigta.tasks;
 
-import fr.entasia.apis.ChatComponent;
+import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.minigta.utils.GPlayer;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Sound;

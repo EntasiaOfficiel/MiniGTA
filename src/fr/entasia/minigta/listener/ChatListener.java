@@ -1,6 +1,6 @@
 package fr.entasia.minigta.listener;
 
-import fr.entasia.apis.ChatComponent;
+import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GPlayer;
 import org.bukkit.event.EventHandler;

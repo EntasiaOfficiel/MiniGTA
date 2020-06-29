@@ -2,7 +2,7 @@ package fr.entasia.minigta.listener;
 
 import com.shampaggon.crackshot.events.WeaponDamageEntityEvent;
 import com.shampaggon.crackshot.events.WeaponPrepareShootEvent;
-import fr.entasia.apis.ChatComponent;
+import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.tasks.FireExtinguishTask;
 import fr.entasia.minigta.utils.GPlayer;
