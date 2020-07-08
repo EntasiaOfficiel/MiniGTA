@@ -16,20 +16,22 @@ import fr.entasia.minigta.utils.GState;
 import fr.entasia.minigta.utils.BreakedBlock;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -219,11 +221,11 @@ public class Main extends JavaPlugin {
 		RedTeam.remove(gp.p.getName());
 		sendMsg(ChatComponent.create(c+gp.p.getDisplayName()+"§7 a quitté la partie !"));
 		if(boards.containsKey(gp.p)){
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			new BukkitRunnable() {
 				public void run() {
 					gp.p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 				}
-			}, 20L);
+			}.runTaskLater(Main.instance, 20);
 			boards.remove(gp.p);
 
 		}
@@ -290,9 +292,10 @@ public class Main extends JavaPlugin {
 		p.sendMessage("Vous avez rejoint la partie !");
 		Utils.reset(p);
 		p.teleport(waitspawn);
-		ChatComponent t = new ChatComponent("§7[Oui]");
+		ChatComponent t = new ChatComponent("§8[§7Oui§7]");
 
 		t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"));
+		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
 		p.spigot().sendMessage(ChatComponent.create(new ChatComponent("§7Voulez-vous télécharger le ressource pack : "), t, new ChatComponent("  " + "§7[Non]")));
 
 		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
