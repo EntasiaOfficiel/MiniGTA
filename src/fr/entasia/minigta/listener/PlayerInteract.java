@@ -1,5 +1,6 @@
 package fr.entasia.minigta.listener;
 
+import fr.entasia.minigta.Inventory.VoteInventory;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GPlayer;
 import org.bukkit.entity.Player;
@@ -24,6 +25,8 @@ public class PlayerInteract implements Listener {
 					gp.setTeam("blue");
 				else if (e.getItem().getItemMeta().getDisplayName().equals("§d§cRetour au spawn EntaGames"))
 					Main.instance.quitPlayer(gp, true);
+				else if (e.getItem().getItemMeta().getDisplayName().equalsIgnoreCase("§7Voter pour la map"))
+					VoteInventory.voteMenuOpen(gp.p);
 				else return;
 				e.setCancelled(true);
 			}

@@ -1,7 +1,6 @@
 package fr.entasia.minigta;
 
 import fr.entasia.minigta.utils.GPlayer;
-import fr.entasia.minigta.utils.GState;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class MiniGtaCmd implements CommandExecutor {
 
@@ -62,47 +62,19 @@ public class MiniGtaCmd implements CommandExecutor {
 						Main.instance.mapVotes.put(mapConfig.getString("map-name"), 0);
 					}
 
-				}else if(args[0].equalsIgnoreCase("red")||args[0].equalsIgnoreCase("blue")) {
-					GPlayer gp = Main.instance.pList.get(p.getName());
-					if(gp==null){
-						p.sendMessage("§7Tu n'est pas en partie !");
-						return true;
-					}
-					gp.setTeam(args[0]);
 				}else if(args[0].equalsIgnoreCase("pack")) {
 					GPlayer gp = Main.instance.pList.get(p.getName());
 					if(gp==null){
 						p.sendMessage("§7Tu n'est pas dans une partie de MiniGTA !");
 						return true;
 					}else{
-						p.setResourcePack("https://files.entasia.fr/servers/entagames/minigta.zip");
+
+						p.setResourcePack("https://www.dropbox.com/s/ftbzt2kr419htz9/minigta.zip?dl=1","2260BD3EBA0EEC6284D63231BA9E93FC");
 						p.sendMessage("§7Vous avez téléchargé le ressource pack");
 						gp.pack = true;
 					}
 
 				}else p.sendMessage("§cArgument incorrect !");
-
-			}else if(args[0].equalsIgnoreCase("vote")){
-				if(args.length != 2){
-					p.sendMessage("Syntaxe --> /minigta (join/leave)");
-					return false;
-				}
-				if(Main.instance.state != GState.STARTING){
-					p.sendMessage("§7Vous ne pouvez pas voter pour une map maintenant");
-					return false;
-				}
-				if(Main.instance.mapVotes.containsKey(args[1])){
-					GPlayer gp = Main.instance.pList.get(p.getName());
-					if(gp.hasVoted){ p.sendMessage("§7Vous ne pouvez pas voter 2 fois"); return false;}
-					int vote = Main.instance.mapVotes.get(args[1]) +1;
-					gp.vote = args[1];
-					Main.instance.mapVotes.put(args[1], vote);
-					p.sendMessage("§7Vous avez voté pour la map "+args[1]+" elle a maintenant "+Main.instance.mapVotes.get(args[1])+" votes");
-					gp.hasVoted=true;
-				}else{
-					p.sendMessage("§7Map incorrecte");
-					return false;
-				}
 
 			}else p.sendMessage("Syntaxe --> /minigta (join/leave)");
 			return true;
