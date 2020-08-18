@@ -298,7 +298,7 @@ public class Main extends JavaPlugin {
 		p.sendMessage("Vous avez rejoint la partie !");
 		Utils.reset(p);
 		p.teleport(waitspawn);
-		ChatComponent t = new ChatComponent("§8[§7Oui§8]$7");
+		ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 
 		t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"));
 		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
