@@ -353,6 +353,15 @@ public class Main extends JavaPlugin {
 				}
 			}
 		}
+
+		if(state==GState.STARTING){
+
+			item = new ItemStack(Material.PAPER);
+			meta = item.getItemMeta();
+			meta.setDisplayName("§7Voter pour la map");
+			item.setItemMeta(meta);
+			Inv.setItem(0,item);
+		}
 	}
 
 	private void setChest() {

@@ -105,12 +105,13 @@ public class DamageListener implements Listener {
 					}
 					if(victim.p.getHealth()<=e.getDamage()){
 						e.setCancelled(true);
+						if(e.getWeaponTitle().startsWith("Fumi")) return;
 						Main.instance.eliminate(victim);
 						attacker.kill++;
 						attacker.p.playSound(attacker.p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5,5);
 						if(e.getWeaponTitle().equalsIgnoreCase("Couteau")){
 							Main.instance.sendMsg(ChatComponent.create(victim.getColor()+victim.p.getDisplayName()+"§7 s'est fait poignarder par "+attacker.getColor()+attacker.p.getDisplayName()));
-						} else if(e.getWeaponTitle().equalsIgnoreCase("C4") || e.getWeaponTitle().startsWith("Gre") || e.getWeaponTitle().startsWith("Fumi")){
+						} else if(e.getWeaponTitle().equalsIgnoreCase("C4") || e.getWeaponTitle().startsWith("Gre")){
 							Main.instance.sendMsg(ChatComponent.create(victim.getColor()+victim.p.getDisplayName()+"§7 s'est fait exploser par "+attacker.getColor()+attacker.p.getDisplayName()));
 						}
 
