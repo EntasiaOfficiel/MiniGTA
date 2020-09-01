@@ -10,10 +10,10 @@ import fr.entasia.minigta.tasks.GAutoStart;
 import fr.entasia.minigta.tasks.GAutoStop;
 import fr.entasia.minigta.tasks.GNoPvP;
 import fr.entasia.minigta.tasks.GRespawn;
-import fr.entasia.minigta.utils.BreakedBlock;
 import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
+import fr.entasia.minigta.utils.BreakedBlock;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -22,6 +22,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -138,10 +145,10 @@ public class Main extends JavaPlugin {
 			}
 		}
 
-		worldConfig=mapFiles.get(bestName);
-		world = Bukkit.getWorld(worldConfig.getString("world-name"));
+		worldConfig=mapFiles.get(bestName.split("§7")[1]);
+		world=Bukkit.getWorld(worldConfig.getString("world-name"));
 
-		state = GState.PLAYING;
+		state=GState.PLAYING;
 		timer = 450;
 		setChest();
 		forcejoinplayer();
@@ -169,26 +176,25 @@ public class Main extends JavaPlugin {
 			gp.p.setMaxHealth(40);
 			gp.p.setHealth(40);
 			gp.p.setGameMode(GameMode.SURVIVAL);
-			gp.p.sendMessage("La partie démarre !");
 			gp.p.getInventory().clear();
 
 			ItemStack item = new ItemStack(Material.IRON_HELMET);
 			ItemMeta meta = item.getItemMeta();
-			meta.setUnbreakable(true);
+			meta.spigot().setUnbreakable(true);
 			item.setItemMeta(meta);
 			gp.p.getInventory().setHelmet(item);
 
 			item = new ItemStack(Material.IRON_LEGGINGS);
-			item.getItemMeta().setUnbreakable(true);
+			item.getItemMeta().spigot().setUnbreakable(true);
 			gp.p.getInventory().setLeggings(item);
 
 			item = new ItemStack(Material.IRON_BOOTS);
-			item.getItemMeta().setUnbreakable(true);
+			item.getItemMeta().spigot().setUnbreakable(true);
 			gp.p.getInventory().setBoots(item);
 
 			item = new ItemStack(Material.LEATHER_CHESTPLATE);
 			LeatherArmorMeta chestMeta = (LeatherArmorMeta) item.getItemMeta();
-			chestMeta.setUnbreakable(true);
+			chestMeta.spigot().setUnbreakable(true);
 
 			ItemStack boussole = new ItemStack(Material.COMPASS);
 			ItemMeta compassMeta = boussole.getItemMeta();
@@ -254,6 +260,7 @@ public class Main extends JavaPlugin {
 
 				sendMsg(ChatComponent.create("§7Lancement de la partie annulé !"));
 				for(GPlayer gp2 : instance.pList.values()) {
+				    gp.p.getInventory().setItem(0,null);
 					gp2.p.setLevel(0);
 				}
 				state=GState.WAITING;
@@ -291,11 +298,11 @@ public class Main extends JavaPlugin {
 		p.sendMessage("Vous avez rejoint la partie !");
 		Utils.reset(p);
 		p.teleport(waitspawn);
-		ChatComponent t = new ChatComponent("§8[§7Oui§7]");
+		ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 
 		t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"));
 		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
-		p.spigot().sendMessage(ChatComponent.create(new ChatComponent("§7Voulez-vous télécharger le ressource pack : "), t, new ChatComponent("  " + "§7[Non]")));
+		p.spigot().sendMessage(ChatComponent.create(new ChatComponent("§7Voulez-vous télécharger le ressource pack : "), t, new ChatComponent("  " + "§8[§7Non§8]§7")));
 
 		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
 
@@ -319,13 +326,24 @@ public class Main extends JavaPlugin {
 		item.setItemMeta(meta);
 		Inv.setItem(8, item);
 
+
+
 		p.setGameMode(GameMode.ADVENTURE);
 
 		if(state==GState.WAITING) {
+
 			if(config.getInt("config.minPlayers") <= pList.size()) {
 				GameStarter = new GAutoStart();
 				GameStarter.runTaskTimer(this, 0, 20);
 				state = GState.STARTING;
+                for(Map.Entry<String, GPlayer> entry: pList.entrySet()){
+                    GPlayer gp = entry.getValue();
+                    item = new ItemStack(Material.PAPER);
+                    meta = item.getItemMeta();
+                    meta.setDisplayName("§7Voter pour la map");
+                    item.setItemMeta(meta);
+                    gp.p.getInventory().setItem(0,item);
+                }
 				sendMsg(ChatComponent.create("§7La partie va commencer dans 1 minute !"));
 				for(int i=1; new File(Main.instance.getDataFolder(), "map"+i+".yml").exists(); i++){
 					File map = new File(getDataFolder(), "map"+i+".yml");
@@ -334,6 +352,15 @@ public class Main extends JavaPlugin {
 					mapVotes.put(mapConfig.getString("map-name"), 0);
 				}
 			}
+		}
+
+		if(state==GState.STARTING){
+
+			item = new ItemStack(Material.PAPER);
+			meta = item.getItemMeta();
+			meta.setDisplayName("§7Voter pour la map");
+			item.setItemMeta(meta);
+			Inv.setItem(0,item);
 		}
 	}
 
@@ -415,29 +442,30 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	public void eliminate(GPlayer gp) {
-			if(gp.team.equals("blue"))RedPoint++;
+	public void eliminate(GPlayer p) {
+			if(p.team.equals("blue"))RedPoint++;
 			else BluePoint++;
-			gp.death++;
-			gp.p.setHealth(gp.p.getMaxHealth());
-			gp.p.setFoodLevel(20);
-			gp.p.setFireTicks(0);
+			p.death++;
+			p.p.setHealth(p.p.getMaxHealth());
+			p.p.setFoodLevel(20);
+			p.p.setFireTicks(0);
 			PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 5, 100);
-			gp.p.addPotionEffect(effect);
-			gp.p.teleport(BlueSpawn);
+			p.p.addPotionEffect(effect);
+			p.p.teleport(BlueSpawn);
 			for(Map.Entry<Player, CustomScoreboardManager> sign : boards.entrySet()){
 				sign.getValue().refreshScore();
 			}
 			if(timer > 5){
-				gp.p.setGameMode(GameMode.SPECTATOR);
-				new GRespawn(gp.p).runTaskTimer(this, 0, 20);
+				p.p.setGameMode(GameMode.SPECTATOR);
+				new GRespawn(p.p).runTaskTimer(this, 0, 20);
 			}else{
-				if(gp.team.equals("blue"))gp.p.teleport(BlueSpawn);
-				else gp.p.teleport(RedSpawn);
+				if(p.team.equals("blue"))p.p.teleport(BlueSpawn);
+				else p.p.teleport(RedSpawn);
 		}
 		
 		
 	}
+
 
 
 	public void endGame() {
@@ -453,12 +481,16 @@ public class Main extends JavaPlugin {
 		for (GPlayer gp : pList.values()){
 			gp.p.getActivePotionEffects().clear();
 			Utils.tpSpawn(gp.p);
-			if(gp.pack)gp.p.setResourcePack("https://files.entasia.fr/servers/entagames/nopack.zip");
+			if(gp.pack){
+				gp.p.setResourcePack("https://www.dropbox.com/s/jcwneplbnrsv651/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
+			}
+
 			int n;
 			if(gp.kill>=bestKill) {
 				bestName = gp.p.getName();
 				bestKill = gp.kill;
 			}
+
 
 			if(gp.team.equals(lostTeam)){
 				gp.p.sendMessage("§cDéfaite ...");
@@ -537,5 +569,34 @@ public class Main extends JavaPlugin {
 		GNoPvP noPvP = new GNoPvP(p);
 		noPvP.runTaskTimer(Main.instance,0,20);
 
+	}
+	public byte[] calcSHA1Hash(String resourcepackUrl) {
+		try {
+			URL url = new URL(resourcepackUrl);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+			if (connection.getContentLength() <= 0) {
+				return null;
+			}
+			byte[] resourcePackBytes = new byte[connection.getContentLength()];
+			InputStream in = connection.getInputStream();
+
+			int b;
+			int i = 0;
+			while ((b = in.read()) != -1) {
+				resourcePackBytes[i] = (byte) b;
+				i++;
+			}
+
+			in.close();
+
+			if (resourcePackBytes != null) {
+				MessageDigest md = MessageDigest.getInstance("SHA-1");
+				return md.digest(resourcePackBytes);
+			}
+		} catch (NoSuchAlgorithmException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

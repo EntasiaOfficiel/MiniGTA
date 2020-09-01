@@ -1,11 +1,14 @@
 package fr.entasia.minigta.listener;
 
+import fr.entasia.minigta.Inventory.VoteInventory;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GPlayer;
+import fr.entasia.minigta.utils.GState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerInteract implements Listener {
@@ -24,6 +27,8 @@ public class PlayerInteract implements Listener {
 					gp.setTeam("blue");
 				else if (e.getItem().getItemMeta().getDisplayName().equals("§d§cRetour au spawn EntaGames"))
 					Main.instance.quitPlayer(gp, true);
+				else if (e.getItem().getItemMeta().getDisplayName().equalsIgnoreCase("§7Voter pour la map"))
+					VoteInventory.voteMenuOpen(gp.p);
 				else return;
 				e.setCancelled(true);
 			}
@@ -32,7 +37,6 @@ public class PlayerInteract implements Listener {
 
 	@EventHandler
 	public static void onInvClick(InventoryClickEvent e) {
-		if (e.getWhoClicked().getWorld().getName().equals(Main.instance.world)
-				&& !Main.instance.hasStarted()&& Main.instance.pList.containsKey(e.getWhoClicked().getName())) e.setCancelled(true);
+		if (Main.instance.pList.containsKey(e.getWhoClicked().getName()) && e.getSlotType() == InventoryType.SlotType.ARMOR || Main.instance.pList.containsKey(e.getWhoClicked().getName()) && !Main.instance.hasStarted()) e.setCancelled(true);
 	}
 }
