@@ -10,10 +10,10 @@ import fr.entasia.minigta.tasks.GAutoStart;
 import fr.entasia.minigta.tasks.GAutoStop;
 import fr.entasia.minigta.tasks.GNoPvP;
 import fr.entasia.minigta.tasks.GRespawn;
+import fr.entasia.minigta.utils.BreakedBlock;
 import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
-import fr.entasia.minigta.utils.BreakedBlock;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -22,7 +22,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
@@ -145,10 +143,10 @@ public class Main extends JavaPlugin {
 			}
 		}
 
-		worldConfig=mapFiles.get(bestName.split("§7")[1]);
-		world=Bukkit.getWorld(worldConfig.getString("world-name"));
+		worldConfig = mapFiles.get(bestName.split("§7")[1]);
+		world = Bukkit.getWorld(worldConfig.getString("world-name"));
 
-		state=GState.PLAYING;
+		state = GState.PLAYING;
 		timer = 450;
 		setChest();
 		forcejoinplayer();
@@ -180,21 +178,21 @@ public class Main extends JavaPlugin {
 
 			ItemStack item = new ItemStack(Material.IRON_HELMET);
 			ItemMeta meta = item.getItemMeta();
-			meta.spigot().setUnbreakable(true);
+			meta.setUnbreakable(true);
 			item.setItemMeta(meta);
 			gp.p.getInventory().setHelmet(item);
 
 			item = new ItemStack(Material.IRON_LEGGINGS);
-			item.getItemMeta().spigot().setUnbreakable(true);
+			item.getItemMeta().setUnbreakable(true);
 			gp.p.getInventory().setLeggings(item);
 
 			item = new ItemStack(Material.IRON_BOOTS);
-			item.getItemMeta().spigot().setUnbreakable(true);
+			item.getItemMeta().setUnbreakable(true);
 			gp.p.getInventory().setBoots(item);
 
 			item = new ItemStack(Material.LEATHER_CHESTPLATE);
 			LeatherArmorMeta chestMeta = (LeatherArmorMeta) item.getItemMeta();
-			chestMeta.spigot().setUnbreakable(true);
+			chestMeta.setUnbreakable(true);
 
 			ItemStack boussole = new ItemStack(Material.COMPASS);
 			ItemMeta compassMeta = boussole.getItemMeta();

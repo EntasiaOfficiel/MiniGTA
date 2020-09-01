@@ -1,9 +1,8 @@
 package fr.entasia.minigta.listener;
 
-import fr.entasia.minigta.Inventory.VoteInventory;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GPlayer;
-import fr.entasia.minigta.utils.GState;
+import fr.entasia.minigta.utils.VoteInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,13 +1,8 @@
 package fr.entasia.minigta.tasks;
 
-import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.minigta.utils.GPlayer;
-import net.md_5.bungee.api.chat.*;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Map;
 
 import static fr.entasia.minigta.Main.instance;
 
