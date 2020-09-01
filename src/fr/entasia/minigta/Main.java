@@ -10,10 +10,10 @@ import fr.entasia.minigta.tasks.GAutoStart;
 import fr.entasia.minigta.tasks.GAutoStop;
 import fr.entasia.minigta.tasks.GNoPvP;
 import fr.entasia.minigta.tasks.GRespawn;
+import fr.entasia.minigta.utils.BreakedBlock;
 import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
-import fr.entasia.minigta.utils.BreakedBlock;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -22,7 +22,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -140,9 +139,9 @@ public class Main extends JavaPlugin {
 		}
 
 		worldConfig=mapFiles.get(bestName);
-		world=Bukkit.getWorld(worldConfig.getString("world-name"));
+		world = Bukkit.getWorld(worldConfig.getString("world-name"));
 
-		state=GState.PLAYING;
+		state = GState.PLAYING;
 		timer = 450;
 		setChest();
 		forcejoinplayer();
@@ -175,21 +174,21 @@ public class Main extends JavaPlugin {
 
 			ItemStack item = new ItemStack(Material.IRON_HELMET);
 			ItemMeta meta = item.getItemMeta();
-			meta.spigot().setUnbreakable(true);
+			meta.setUnbreakable(true);
 			item.setItemMeta(meta);
 			gp.p.getInventory().setHelmet(item);
 
 			item = new ItemStack(Material.IRON_LEGGINGS);
-			item.getItemMeta().spigot().setUnbreakable(true);
+			item.getItemMeta().setUnbreakable(true);
 			gp.p.getInventory().setLeggings(item);
 
 			item = new ItemStack(Material.IRON_BOOTS);
-			item.getItemMeta().spigot().setUnbreakable(true);
+			item.getItemMeta().setUnbreakable(true);
 			gp.p.getInventory().setBoots(item);
 
 			item = new ItemStack(Material.LEATHER_CHESTPLATE);
 			LeatherArmorMeta chestMeta = (LeatherArmorMeta) item.getItemMeta();
-			chestMeta.spigot().setUnbreakable(true);
+			chestMeta.setUnbreakable(true);
 
 			ItemStack boussole = new ItemStack(Material.COMPASS);
 			ItemMeta compassMeta = boussole.getItemMeta();
@@ -416,25 +415,25 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	public void eliminate(GPlayer p) {
-			if(p.team.equals("blue"))RedPoint++;
+	public void eliminate(GPlayer gp) {
+			if(gp.team.equals("blue"))RedPoint++;
 			else BluePoint++;
-			p.death++;
-			p.p.setHealth(p.p.getMaxHealth());
-			p.p.setFoodLevel(20);
-			p.p.setFireTicks(0);
+			gp.death++;
+			gp.p.setHealth(gp.p.getMaxHealth());
+			gp.p.setFoodLevel(20);
+			gp.p.setFireTicks(0);
 			PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 5, 100);
-			p.p.addPotionEffect(effect);
-			p.p.teleport(BlueSpawn);
+			gp.p.addPotionEffect(effect);
+			gp.p.teleport(BlueSpawn);
 			for(Map.Entry<Player, CustomScoreboardManager> sign : boards.entrySet()){
 				sign.getValue().refreshScore();
 			}
 			if(timer > 5){
-				p.p.setGameMode(GameMode.SPECTATOR);
-				new GRespawn(p.p).runTaskTimer(this, 0, 20);
+				gp.p.setGameMode(GameMode.SPECTATOR);
+				new GRespawn(gp.p).runTaskTimer(this, 0, 20);
 			}else{
-				if(p.team.equals("blue"))p.p.teleport(BlueSpawn);
-				else p.p.teleport(RedSpawn);
+				if(gp.team.equals("blue"))gp.p.teleport(BlueSpawn);
+				else gp.p.teleport(RedSpawn);
 		}
 		
 		

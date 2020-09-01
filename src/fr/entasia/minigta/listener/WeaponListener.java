@@ -3,15 +3,14 @@ package fr.entasia.minigta.listener;
 import com.shampaggon.crackshot.events.WeaponHitBlockEvent;
 import com.shampaggon.crackshot.events.WeaponPlaceMineEvent;
 import fr.entasia.minigta.Main;
-import fr.entasia.minigta.utils.GState;
 import fr.entasia.minigta.utils.BreakedBlock;
+import fr.entasia.minigta.utils.GState;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.util.Vector;
 
 public class WeaponListener implements Listener {
 

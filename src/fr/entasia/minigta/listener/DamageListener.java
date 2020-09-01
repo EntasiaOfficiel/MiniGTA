@@ -8,7 +8,6 @@ import fr.entasia.minigta.tasks.FireExtinguishTask;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,8 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class DamageListener implements Listener {

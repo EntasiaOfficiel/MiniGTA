@@ -22,7 +22,7 @@ public class MiniGtaCmd implements CommandExecutor {
 			Player p = (Player)sender;
 			if(args.length ==1) {
 				if(args[0].equalsIgnoreCase("join")) {
-					if(Main.instance.pList.containsKey(p)) p.sendMessage("Vous êtes deja dans la partie");
+					if(Main.instance.pList.containsKey(p.getName())) p.sendMessage("Vous êtes deja dans la partie");
 					else if(Main.instance.hasStarted()) {
 						p.sendMessage("La partie a déjà commencé");
 						return false;

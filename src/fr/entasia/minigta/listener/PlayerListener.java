@@ -1,25 +1,15 @@
 package fr.entasia.minigta.listener;
 
-import com.shampaggon.crackshot.events.WeaponExplodeEvent;
-import com.shampaggon.crackshot.events.WeaponPlaceMineEvent;
-import com.shampaggon.crackshot.events.WeaponTriggerEvent;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GState;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
