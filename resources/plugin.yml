@@ -4,6 +4,7 @@ author: Stargeyt et iTrooz_
 main: fr.entasia.minigta.Main
 depend: [EGTools,CrackShot]
 softdepend: [Multiverse-Core]
+api-version: '1.15'
 commands:
   minigta:
   eco:
