@@ -69,7 +69,7 @@ public class Main extends JavaPlugin {
 	public int BluePoint = 0;
 	public Location RedSpawn;
 	public Location BlueSpawn;
-	public List<Location> MineLocation = new ArrayList<>();
+	public List<Location> mineLocs = new ArrayList<>();
 	public List<BreakedBlock> GlassBroke = new ArrayList<>();
 	public int timer = 20;
 	public static SQLConnection sql;
@@ -77,48 +77,50 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		try {
-			sql = new SQLConnection("entagames","playerdata");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		instance = this;
+			sql = new SQLConnection(false).mariadb("entagames", "playerdata");
+			instance = this;
+			world = Bukkit.getWorld(worldConfig.getString("world-name"));
 
-		saveDefaultConfig();
-		if(!chestFile.exists()) {
-			try {
-				chestFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
+
+			saveDefaultConfig();
+			if (!chestFile.exists()) {
+				try {
+					chestFile.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+
+			config = YamlConfiguration.loadConfiguration(fileConfig);
+			chestConfig = YamlConfiguration.loadConfiguration(chestFile);
+			System.out.println("Plugin MiniGta activé, par Stargeyt");
+
+			String[] d = config.getString("position.waitpoint").split(",");
+			waitspawn = new Location(world, Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
+
+			state = GState.WAITING;
+
+			getCommand("minigta").setExecutor(new MiniGtaCmd());
+
+			getServer().getPluginManager().registerEvents(new DamageListener(), this);
+			getServer().getPluginManager().registerEvents(new ChatListener(), this);
+			getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+			getServer().getPluginManager().registerEvents(new PlayerInteract(), this);
+			getServer().getPluginManager().registerEvents(new WeaponListener(), this);
+
+			for (int i = 1; new File(Main.instance.getDataFolder(), "map" + i + ".yml").exists(); i++) {
+				File map = new File(getDataFolder(), "map" + i + ".yml");
+				FileConfiguration mapConfig = YamlConfiguration.loadConfiguration(map);
+				mapFiles.put(mapConfig.getString("map-name"), mapConfig);
+				mapVotes.put(mapConfig.getString("map-name"), 0);
+			}
+
+
+		}catch(Throwable e){
+			e.printStackTrace();
+			getLogger().severe("Une erreur est survenue ! ARRET DU SERVEUR");
+			getServer().shutdown();
 		}
-
-		config = YamlConfiguration.loadConfiguration(fileConfig);
-		chestConfig = YamlConfiguration.loadConfiguration(chestFile);
-		System.out.println("Plugin MiniGta activé, par Stargeyt");
-
-		String[] d = config.getString("position.waitpoint").split(",");
-		waitspawn = new Location(Bukkit.getWorld(config.getString("position.world")),Double.parseDouble(d[0]),Double.parseDouble(d[1]),Double.parseDouble(d[2]));
-
-		state = GState.WAITING;
-
-		getCommand("minigta").setExecutor(new MiniGtaCmd());
-
-		getServer().getPluginManager().registerEvents(new DamageListener(), this);
-		getServer().getPluginManager().registerEvents(new ChatListener(), this);
-		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-		getServer().getPluginManager().registerEvents(new PlayerInteract(), this);
-		getServer().getPluginManager().registerEvents(new WeaponListener(),this);
-
-		for(int i=1; new File(Main.instance.getDataFolder(), "map"+i+".yml").exists(); i++){
-			File map = new File(getDataFolder(), "map"+i+".yml");
-			FileConfiguration mapConfig= YamlConfiguration.loadConfiguration(map);
-			mapFiles.put(mapConfig.getString("map-name"), mapConfig);
-			mapVotes.put(mapConfig.getString("map-name"), 0);
-		}
-
-
-
-
 	}
 
 	
@@ -144,7 +146,6 @@ public class Main extends JavaPlugin {
 		}
 
 		worldConfig = mapFiles.get(bestName.split("§7")[1]);
-		world = Bukkit.getWorld(worldConfig.getString("world-name"));
 
 		state = GState.PLAYING;
 		timer = 450;
@@ -161,12 +162,12 @@ public class Main extends JavaPlugin {
 		int high = worldConfig.getStringList("spawn.points").size();
 		int r1 = (int)(Math.random()*high);
 		String[] d = worldConfig.getStringList("spawn.points").get(r1).split(",");
-		RedSpawn = new Location(Bukkit.getWorld(worldConfig.getString("world-name")), Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
+		RedSpawn = new Location(world, Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
 		while(true){
 			int r2=(int)(Math.random()*high);
 			if(r2!=r1){
 				d = worldConfig.getStringList("spawn.points").get(r2).split(",");
-				BlueSpawn = new Location(Bukkit.getWorld(worldConfig.getString("world-name")), Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
+				BlueSpawn = new Location(world, Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
 				break;
 			}
 		}
@@ -293,14 +294,14 @@ public class Main extends JavaPlugin {
 		boards.put(p,scoreboard);
 
 
-		p.sendMessage("Vous avez rejoint la partie !");
+		p.sendMessage("§7Tu as rejoins la partie !");
 		Utils.reset(p);
 		p.teleport(waitspawn);
 		ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 
 		t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"));
 		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
-		p.spigot().sendMessage(ChatComponent.create(new ChatComponent("§7Voulez-vous télécharger le ressource pack : "), t, new ChatComponent("  " + "§8[§7Non§8]§7")));
+		p.spigot().sendMessage(new ChatComponent("§7Veux-tu télécharger le ressource pack : ").append(t).append("  §8[§7Non§8]§7").create());
 
 		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
 
@@ -318,7 +319,7 @@ public class Main extends JavaPlugin {
 		item.setItemMeta(meta);
 		Inv.setItem(6, item);
 
-		item = new ItemStack(Material.BED);
+		item = new ItemStack(Material.ORANGE_BED);
 		meta = item.getItemMeta();
 		meta.setDisplayName("§d§cRetour au spawn EntaGames");
 		item.setItemMeta(meta);
@@ -367,7 +368,7 @@ public class Main extends JavaPlugin {
 		int number = 0;
 		for(int i=1; worldConfig.get("chest." +i) != null; i++) {
 			String[] d = worldConfig.getString("chest."+i).split(",");
-			Location location = new Location(Bukkit.getWorld(worldConfig.getString("world-name")),Double.parseDouble(d[0]),Double.parseDouble(d[1]),Double.parseDouble(d[2]) );
+			Location location = new Location(world,Double.parseDouble(d[0]),Double.parseDouble(d[1]),Double.parseDouble(d[2]) );
 			location.getBlock().setType(Material.CHEST);
 			
 			Chest chest = (Chest) location.getBlock().getState();
@@ -512,7 +513,7 @@ public class Main extends JavaPlugin {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			gp.p.sendMessage("§7Vous avez gagné "+n+" §7coins !");
+			gp.p.sendMessage("§7Tu as gagné "+n+" §7coins !");
 		}
 
 
@@ -525,19 +526,18 @@ public class Main extends JavaPlugin {
 			sign.getKey().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 		}
 
-		for (Location loc : MineLocation) {
+		for (Location loc : mineLocs) {
 			loc.getBlock().setType(Material.AIR);
 		}
 
 		for(BreakedBlock bl : GlassBroke){
 			Block b = bl.loc.getBlock();
 			b.setType(bl.material, false);
-			b.setData(bl.data, false);
 		}
 
 
 		GlassBroke.clear();
-		MineLocation.clear();
+		mineLocs.clear();
 		boards.clear();
 		pList.clear();
 		RedTeam.clear();
@@ -588,10 +588,8 @@ public class Main extends JavaPlugin {
 
 			in.close();
 
-			if (resourcePackBytes != null) {
-				MessageDigest md = MessageDigest.getInstance("SHA-1");
-				return md.digest(resourcePackBytes);
-			}
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			return md.digest(resourcePackBytes);
 		} catch (NoSuchAlgorithmException | IOException e) {
 			e.printStackTrace();
 		}

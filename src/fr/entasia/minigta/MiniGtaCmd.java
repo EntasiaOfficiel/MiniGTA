@@ -75,12 +75,12 @@ public class MiniGtaCmd implements CommandExecutor {
 				case "pack": {
 					GPlayer gp = Main.instance.pList.get(p.getName());
 					if (gp == null) {
-						p.sendMessage("§7Tu n'est pas dans une partie de MiniGTA !");
+						p.sendMessage("§7Tu n'es pas dans une partie de MiniGTA !");
 						return true;
 					} else {
 
 						p.setResourcePack("https://www.dropbox.com/s/ftbzt2kr419htz9/minigta.zip?dl=1", "2260BD3EBA0EEC6284D63231BA9E93FC");
-						p.sendMessage("§7Vous avez téléchargé le ressource pack");
+						p.sendMessage("§7Tu as téléchargé le ressource pack");
 						gp.pack = true;
 					}
 					break;

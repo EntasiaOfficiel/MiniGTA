@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
 		if(e.getPlayer().getWorld() == Main.instance.world&&
 				Main.instance.pList.containsKey(e.getPlayer().getName()) ){
 				Block b = e.getBlockPlaced();
-				if(b.getType().equals(Material.SKULL)){
+				if(b.getType()==Material.PLAYER_HEAD){
 					e.setCancelled(false);
 				}
 		}

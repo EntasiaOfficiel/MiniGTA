@@ -1,5 +1,6 @@
 package fr.entasia.minigta.listener;
 
+import fr.entasia.apis.utils.ItemUtils;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.VoteInventory;
@@ -17,7 +18,7 @@ public class PlayerInteract implements Listener {
 	public void onPlayerUse(PlayerInteractEvent e){
 	    Player p = e.getPlayer();
 		if(e.getAction().toString().startsWith("LE") || e.getAction().toString().startsWith("RI")) {
-			if (e.getItem() != null && e.getItem().getItemMeta() != null && e.getItem().getItemMeta().getDisplayName() != null) {
+			if (e.getItem() != null && ItemUtils.hasName(e.getItem())) {
 				GPlayer gp = Main.instance.pList.get(p.getName());
 				if(gp==null)return;
 				if (e.getItem().getItemMeta().getDisplayName().equals("§cRejoindre l'équipe Rouge !"))
