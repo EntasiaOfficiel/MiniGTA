@@ -58,9 +58,8 @@ public class MiniGtaCmd implements CommandExecutor {
 				}
 				case "reload": {
 					Main.instance.chestFile = Main.instance.chestFile.getAbsoluteFile();
-					Main.instance.fileConfig = Main.instance.fileConfig.getAbsoluteFile();
 					Main.instance.chestConfig = YamlConfiguration.loadConfiguration(Main.instance.chestFile);
-					Main.instance.config = YamlConfiguration.loadConfiguration(Main.instance.fileConfig);
+					Main.instance.reloadConfig();
 					Main.instance.mapVotes.clear();
 					Main.instance.mapFiles.clear();
 					for (int i = 1; new File(Main.instance.getDataFolder(), "map" + i + ".yml").exists(); i++) {

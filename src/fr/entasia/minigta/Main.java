@@ -56,9 +56,8 @@ public class Main extends JavaPlugin {
 	public List<String> BlueTeam = new ArrayList<>();
 	public List<String> RedTeam = new ArrayList<>();
 	public File chestFile = new File(getDataFolder(), "chest.yml");
-	public File fileConfig = new File(getDataFolder(), "config.yml");
-	public FileConfiguration chestConfig;
 	public FileConfiguration config;
+	public FileConfiguration chestConfig;
 	public GState state;
 	public GAutoStart GameStarter;
 	public GAutoStop GameChrono;
@@ -77,12 +76,13 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		try {
-			sql = new SQLConnection(false).mariadb("entagames", "playerdata");
 			instance = this;
-			world = Bukkit.getWorld(worldConfig.getString("world-name"));
-
+			sql = new SQLConnection(false).mariadb("entagames", "playerdata");
+			config = getConfig();
 
 			saveDefaultConfig();
+			world = Bukkit.getWorld(getConfig().getString("world"));
+
 			if (!chestFile.exists()) {
 				try {
 					chestFile.createNewFile();
@@ -91,9 +91,7 @@ public class Main extends JavaPlugin {
 				}
 			}
 
-			config = YamlConfiguration.loadConfiguration(fileConfig);
 			chestConfig = YamlConfiguration.loadConfiguration(chestFile);
-			System.out.println("Plugin MiniGta activé, par Stargeyt");
 
 			String[] d = config.getString("position.waitpoint").split(",");
 			waitspawn = new Location(world, Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
@@ -116,17 +114,12 @@ public class Main extends JavaPlugin {
 			}
 
 
+			getLogger().info("Plugin activé !");
 		}catch(Throwable e){
 			e.printStackTrace();
 			getLogger().severe("Une erreur est survenue ! ARRET DU SERVEUR");
 			getServer().shutdown();
 		}
-	}
-
-	
-	@Override
-	public void onDisable() {
-		System.out.println("Plugin MiniGta desactivé");
 	}
 
 	public boolean hasStarted() {
