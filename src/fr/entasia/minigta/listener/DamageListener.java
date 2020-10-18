@@ -8,6 +8,7 @@ import fr.entasia.minigta.tasks.FireExtinguishTask;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.util.Vector;
 
 public class DamageListener implements Listener {
@@ -41,11 +43,16 @@ public class DamageListener implements Listener {
 	}
 
 
+
+
 	@EventHandler
 	public void pvp(EntityDamageByEntityEvent e) {
 		if(e.getEntity().getWorld()==Main.instance.world&&e.getEntity() instanceof Player && Main.instance.hasStarted()) {
 			GPlayer gp = Main.instance.pList.get(e.getEntity().getName());
 			GPlayer gp2 = Main.instance.pList.get(e.getDamager().getName());
+			if(e.getCause()==EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+				Main.instance.sendMsg(ChatComponent.create(gp.getColor() + gp.p.getDisplayName() + "§7 s'est fait exploser par un C4"));
+			}
 			if(gp!=null&&gp2!=null&&gp.team.equals(gp2.team)&&gp2.p.getInventory().getItemInMainHand().getType()!=Material.IRON_SWORD){
 				e.setCancelled(true);
 				gp2.p.sendMessage("§cVous êtes dans la même équipe !");
@@ -69,14 +76,20 @@ public class DamageListener implements Listener {
 		if(e.getEntity() instanceof Player){
 			GPlayer gp = Main.instance.pList.get(e.getEntity().getName());
 			if(gp==null)return;
+
 			if(Main.instance.hasStarted()){
 				if(e.getCause()==EntityDamageEvent.DamageCause.PROJECTILE||
-						e.getCause()==EntityDamageEvent.DamageCause.ENTITY_ATTACK||e.getCause()== EntityDamageEvent.DamageCause.BLOCK_EXPLOSION||
-				e.getCause()==EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)return;
+						e.getCause()==EntityDamageEvent.DamageCause.ENTITY_ATTACK)return;
 				if(gp.p.getHealth()>e.getDamage())return;
+
 				e.setCancelled(true);
 				Main.instance.eliminate(gp);
-				Main.instance.sendMsg(ChatComponent.create(gp.getColor()+gp.p.getDisplayName()+"§7 est mort"));
+				if(e.getCause()==EntityDamageEvent.DamageCause.BLOCK_EXPLOSION){
+					Main.instance.sendMsg(ChatComponent.create(gp.getColor()+gp.p.getDisplayName()+"§7 s'est fait exploser par un C4"));
+				}else{
+					Main.instance.sendMsg(ChatComponent.create(gp.getColor()+gp.p.getDisplayName()+"§7 est mort"));
+				}
+
 			}else e.setCancelled(true);
 		}
 	}

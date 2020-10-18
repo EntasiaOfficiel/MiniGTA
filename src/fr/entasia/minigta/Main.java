@@ -5,6 +5,7 @@ import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.apis.sql.SQLConnection;
 import fr.entasia.egtools.Utils;
 import fr.entasia.egtools.utils.MoneyUtils;
+import fr.entasia.minigta.items.C4Manager;
 import fr.entasia.minigta.listener.*;
 import fr.entasia.minigta.tasks.GAutoStart;
 import fr.entasia.minigta.tasks.GAutoStop;
@@ -81,7 +82,7 @@ public class Main extends JavaPlugin {
 			config = getConfig();
 
 			saveDefaultConfig();
-			world = Bukkit.getWorld(getConfig().getString("world"));
+			world = Bukkit.getWorld(getConfig().getString("position.world"));
 
 			if (!chestFile.exists()) {
 				try {
@@ -109,6 +110,7 @@ public class Main extends JavaPlugin {
 			for (int i = 1; new File(Main.instance.getDataFolder(), "map" + i + ".yml").exists(); i++) {
 				File map = new File(getDataFolder(), "map" + i + ".yml");
 				FileConfiguration mapConfig = YamlConfiguration.loadConfiguration(map);
+				System.out.println(mapConfig.getString("map-name"));
 				mapFiles.put(mapConfig.getString("map-name"), mapConfig);
 				mapVotes.put(mapConfig.getString("map-name"), 0);
 			}
@@ -128,17 +130,19 @@ public class Main extends JavaPlugin {
 
 	public void startGame() {
 		int bestVote=0;
-		String bestName="";
+		String bestName="§7Fnac";
 		for(Map.Entry<String, Integer> entry : mapVotes.entrySet()){
 			String mapName = entry.getKey();
 			int mapVote = entry.getValue();
 			if(mapVote>=bestVote){
+
 				bestVote=mapVote;
 				bestName=mapName;
 			}
 		}
 
-		worldConfig = mapFiles.get(bestName.split("§7")[1]);
+
+		worldConfig = mapFiles.get(bestName);
 
 		state = GState.PLAYING;
 		timer = 450;
@@ -276,6 +280,9 @@ public class Main extends JavaPlugin {
 
 	}
 	public void joinPlayer(Player p) {
+
+
+		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
 		pList.put(p.getName(), new GPlayer(p));
 		for(Map.Entry<Player, CustomScoreboardManager> sb : boards.entrySet()){
 			CustomScoreboardManager scoreboard = sb.getValue();
@@ -296,7 +303,7 @@ public class Main extends JavaPlugin {
 		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
 		p.spigot().sendMessage(new ChatComponent("§7Veux-tu télécharger le ressource pack : ").append(t).append("  §8[§7Non§8]§7").create());
 
-		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
+
 
 
 		Inventory Inv= p.getInventory();
@@ -378,6 +385,10 @@ public class Main extends JavaPlugin {
 						}
 						int amount=1;
 						int teste = worldConfig.getInt("weapon."+i2+".amount");
+						if("C4".equalsIgnoreCase(worldConfig.getString("weapon."+i2+".type"))){
+							inv.setItem(test, C4Manager.createC4());
+							continue;
+						}
 						if(teste > 0){
 							amount=teste;
 						}

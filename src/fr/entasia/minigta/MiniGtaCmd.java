@@ -1,5 +1,6 @@
 package fr.entasia.minigta;
 
+import fr.entasia.minigta.items.C4Manager;
 import fr.entasia.minigta.utils.GPlayer;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -84,6 +85,11 @@ public class MiniGtaCmd implements CommandExecutor {
 					}
 					break;
 				}
+
+				case "test":{
+					p.getInventory().setItem(2, C4Manager.createC4());
+				}
+
 				default: {
 					p.sendMessage("§cArgument incorrect !");
 					break;

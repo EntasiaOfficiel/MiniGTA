@@ -3,6 +3,7 @@ package fr.entasia.minigta.utils;
 import fr.entasia.apis.menus.MenuClickEvent;
 import fr.entasia.apis.menus.MenuCreator;
 import fr.entasia.minigta.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,7 +29,8 @@ public class VoteInventory {
 						e.player.sendMessage("§7Vous ne pouvez pas voter 2 fois");
 						return;
 					}
-					int vote = Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName().split("§7")[1]) + 1;
+					System.out.println(e.item.getItemMeta().getDisplayName());
+					int vote = Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName()) + 1;
 					gp.vote = e.item.getItemMeta().getDisplayName();
 					Main.instance.mapVotes.put(e.item.getItemMeta().getDisplayName(), vote);
 					e.player.sendMessage("§7Vous avez voté pour la map " + e.item.getItemMeta().getDisplayName() + " elle a maintenant " + Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName()) + " votes");

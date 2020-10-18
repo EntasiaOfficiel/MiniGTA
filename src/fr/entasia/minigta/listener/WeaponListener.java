@@ -25,14 +25,6 @@ public class WeaponListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onPlaceMine(BlockPlaceEvent e){
-		Block b = e.getBlockPlaced();
-		if(b.getType() == Material.PLAYER_HEAD){
-			if(Main.instance.mineLocs.contains(b.getLocation())) return;
-			Main.instance.mineLocs.add(b.getLocation());
-		}
-	}
 
 
 	@EventHandler
