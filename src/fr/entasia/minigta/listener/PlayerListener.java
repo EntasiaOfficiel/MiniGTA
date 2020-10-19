@@ -5,8 +5,13 @@ import fr.entasia.apis.nbt.NBTComponent;
 import fr.entasia.apis.nbt.NBTTypes;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.utils.GState;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Openable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -65,15 +70,24 @@ public class PlayerListener implements Listener {
 					}
 
 					ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
+
+					if(item.getItemMeta().getDisplayName().split("'").length <2){
+						e.setCancelled(true);
+						return;
+					}
 					int nbrC4 = Integer.parseInt(item.getItemMeta().getDisplayName().split("'")[1]);
 					if(nbrC4 <=0){
 						e.setCancelled(true);
 						return;
 					}
 
-					if(b.getWorld().getBlockAt(b.getLocation().add(0,-1,0)).getType().equals(Material.AIR)){
-						TrapDoor trapDoor = (TrapDoor) b.getState().getData();
-						trapDoor.setOpen(true);
+					if(b.getRelative(BlockFace.DOWN).getType()== Material.AIR){
+
+						Openable a = (Openable) e.getBlockPlaced().getBlockData();
+						a.setOpen(true);
+						e.getBlockPlaced().setBlockData(a);
+
+
 					}
 					String[] name = item.getItemMeta().getDisplayName().split("'");
 					name[1]= "'"+ (nbrC4 - 1) +"'";
@@ -92,10 +106,9 @@ public class PlayerListener implements Listener {
 					NBTComponent nbt = ItemNBT.getNBT(item);
 
 					if(nbt==null)return;
-                    System.out.println("Test1");
+
 					String location = (String) nbt.getValue(NBTTypes.String,"loc");
 					if(location == null)return;
-                    System.out.println("Test2");
 					String[] locs = location.split(";");
 					String finalLocs = "";
 

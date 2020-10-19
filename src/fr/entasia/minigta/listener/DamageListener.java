@@ -8,6 +8,7 @@ import fr.entasia.minigta.tasks.FireExtinguishTask;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.logging.log4j.core.net.Priority;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -15,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -50,9 +52,6 @@ public class DamageListener implements Listener {
 		if(e.getEntity().getWorld()==Main.instance.world&&e.getEntity() instanceof Player && Main.instance.hasStarted()) {
 			GPlayer gp = Main.instance.pList.get(e.getEntity().getName());
 			GPlayer gp2 = Main.instance.pList.get(e.getDamager().getName());
-			if(e.getCause()==EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
-				Main.instance.sendMsg(ChatComponent.create(gp.getColor() + gp.p.getDisplayName() + "§7 s'est fait exploser par un C4"));
-			}
 			if(gp!=null&&gp2!=null&&gp.team.equals(gp2.team)&&gp2.p.getInventory().getItemInMainHand().getType()!=Material.IRON_SWORD){
 				e.setCancelled(true);
 				gp2.p.sendMessage("§cVous êtes dans la même équipe !");
@@ -75,6 +74,7 @@ public class DamageListener implements Listener {
 	public void damage(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player){
 			GPlayer gp = Main.instance.pList.get(e.getEntity().getName());
+
 			if(gp==null)return;
 
 			if(Main.instance.hasStarted()){
@@ -85,6 +85,7 @@ public class DamageListener implements Listener {
 				e.setCancelled(true);
 				Main.instance.eliminate(gp);
 				if(e.getCause()==EntityDamageEvent.DamageCause.BLOCK_EXPLOSION){
+
 					Main.instance.sendMsg(ChatComponent.create(gp.getColor()+gp.p.getDisplayName()+"§7 s'est fait exploser par un C4"));
 				}else{
 					Main.instance.sendMsg(ChatComponent.create(gp.getColor()+gp.p.getDisplayName()+"§7 est mort"));
@@ -94,7 +95,7 @@ public class DamageListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void weapon(WeaponDamageEntityEvent e) {
 
 		if(e.getVictim() instanceof Player && Main.instance.hasStarted()){

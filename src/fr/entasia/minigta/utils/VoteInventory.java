@@ -2,6 +2,9 @@ package fr.entasia.minigta.utils;
 
 import fr.entasia.apis.menus.MenuClickEvent;
 import fr.entasia.apis.menus.MenuCreator;
+import fr.entasia.apis.nbt.ItemNBT;
+import fr.entasia.apis.nbt.NBTComponent;
+import fr.entasia.apis.nbt.NBTTypes;
 import fr.entasia.minigta.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,11 +32,13 @@ public class VoteInventory {
 						e.player.sendMessage("§7Vous ne pouvez pas voter 2 fois");
 						return;
 					}
-					System.out.println(e.item.getItemMeta().getDisplayName());
-					int vote = Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName()) + 1;
+
+
+
+					int vote = Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName().split("§7")[1]) + 1;
 					gp.vote = e.item.getItemMeta().getDisplayName();
-					Main.instance.mapVotes.put(e.item.getItemMeta().getDisplayName(), vote);
-					e.player.sendMessage("§7Vous avez voté pour la map " + e.item.getItemMeta().getDisplayName() + " elle a maintenant " + Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName()) + " votes");
+					Main.instance.mapVotes.put(e.item.getItemMeta().getDisplayName().split("§7")[1], vote);
+					e.player.sendMessage("§7Vous avez voté pour la map " + e.item.getItemMeta().getDisplayName() + " elle a maintenant " + Main.instance.mapVotes.get(e.item.getItemMeta().getDisplayName().split("§7")[1]) + " votes");
 					gp.hasVoted = true;
 					gp.p.closeInventory();
 				}
@@ -55,6 +60,7 @@ public class VoteInventory {
 			ItemStack item = new ItemStack(Material.PAPER);
 			ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName("§7" + entry.getKey());
+
 			meta.setLore(Collections.singletonList("§7" + " (recommandée de " + fileConfiguration.getInt("min-player") + " à " + fileConfiguration.getInt("max-player") + " joueurs)"));
 			item.setItemMeta(meta);
 

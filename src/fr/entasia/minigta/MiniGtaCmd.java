@@ -79,16 +79,13 @@ public class MiniGtaCmd implements CommandExecutor {
 						return true;
 					} else {
 
-						p.setResourcePack("https://www.dropbox.com/s/ftbzt2kr419htz9/minigta.zip?dl=1", "2260BD3EBA0EEC6284D63231BA9E93FC");
+						p.setResourcePack("https://www.dropbox.com/s/yi9s99ukehwcrbl/minigta-pack.zip?dl=1", "80D288EFC6C4AD12444C3C7618417F03");
 						p.sendMessage("§7Tu as téléchargé le ressource pack");
 						gp.pack = true;
 					}
 					break;
 				}
 
-				case "test":{
-					p.getInventory().setItem(2, C4Manager.createC4());
-				}
 
 				default: {
 					p.sendMessage("§cArgument incorrect !");

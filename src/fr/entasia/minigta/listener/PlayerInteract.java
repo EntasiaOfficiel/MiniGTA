@@ -44,15 +44,12 @@ public class PlayerInteract implements Listener {
 					VoteInventory.voteMenuOpen(gp.p);
 				else if (e.getItem().getItemMeta().getDisplayName().startsWith("§eC4"))
 					if(e.getAction().toString().startsWith("LE")){
-                        System.out.println("Test3");
 						ItemStack item = e.getItem();
 
 						NBTComponent nbt = ItemNBT.getNBT(item);
 						if(nbt==null)return;
-                        System.out.println("Test4");
 						String loc = (String) nbt.getValue(NBTTypes.String ,"loc");
 						if(loc == "")return;
-                        System.out.println("Test5");
 
 						String[] locs = loc.split(";");
 						double x = Double.parseDouble(locs[0].split(",")[0]);

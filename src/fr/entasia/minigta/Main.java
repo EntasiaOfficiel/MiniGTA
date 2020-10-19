@@ -107,13 +107,7 @@ public class Main extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PlayerInteract(), this);
 			getServer().getPluginManager().registerEvents(new WeaponListener(), this);
 
-			for (int i = 1; new File(Main.instance.getDataFolder(), "map" + i + ".yml").exists(); i++) {
-				File map = new File(getDataFolder(), "map" + i + ".yml");
-				FileConfiguration mapConfig = YamlConfiguration.loadConfiguration(map);
-				System.out.println(mapConfig.getString("map-name"));
-				mapFiles.put(mapConfig.getString("map-name"), mapConfig);
-				mapVotes.put(mapConfig.getString("map-name"), 0);
-			}
+
 
 
 			getLogger().info("Plugin activé !");
@@ -130,7 +124,7 @@ public class Main extends JavaPlugin {
 
 	public void startGame() {
 		int bestVote=0;
-		String bestName="§7Fnac";
+		String bestName="";
 		for(Map.Entry<String, Integer> entry : mapVotes.entrySet()){
 			String mapName = entry.getKey();
 			int mapVote = entry.getValue();
@@ -214,7 +208,10 @@ public class Main extends JavaPlugin {
 	public void quitPlayer(GPlayer gp, boolean manual) {
 		if(manual){
 			Utils.tpSpawn(gp.p);
-			gp.p.sendMessage("Tu as quitté la partie !");
+			gp.p.sendMessage("§7Tu as quitté la partie !");
+		}
+		if(gp.pack){
+			gp.p.setResourcePack("https://www.dropbox.com/s/2y4y9qxdl5w35db/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
 		}
 		String c = gp.getColor();
 		pList.remove(gp.p.getName());
@@ -344,11 +341,14 @@ public class Main extends JavaPlugin {
                     gp.p.getInventory().setItem(0,item);
                 }
 				sendMsg(ChatComponent.create("§7La partie va commencer dans 1 minute !"));
-				for(int i=1; new File(Main.instance.getDataFolder(), "map"+i+".yml").exists(); i++){
-					File map = new File(getDataFolder(), "map"+i+".yml");
-					FileConfiguration mapConfig= YamlConfiguration.loadConfiguration(map);
+				for (int i = 1; new File(Main.instance.getDataFolder(), "map" + i + ".yml").exists(); i++) {
+					File map = new File(getDataFolder(), "map" + i + ".yml");
+					FileConfiguration mapConfig = YamlConfiguration.loadConfiguration(map);
+
+
 					mapFiles.put(mapConfig.getString("map-name"), mapConfig);
 					mapVotes.put(mapConfig.getString("map-name"), 0);
+
 				}
 			}
 		}
@@ -485,7 +485,7 @@ public class Main extends JavaPlugin {
 			gp.p.getActivePotionEffects().clear();
 			Utils.tpSpawn(gp.p);
 			if(gp.pack){
-				gp.p.setResourcePack("https://www.dropbox.com/s/jcwneplbnrsv651/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
+				gp.p.setResourcePack("https://www.dropbox.com/s/2y4y9qxdl5w35db/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
 			}
 
 			int n;
