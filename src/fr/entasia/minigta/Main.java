@@ -175,11 +175,14 @@ public class Main extends JavaPlugin {
 			gp.p.getInventory().setHelmet(item);
 
 			item = new ItemStack(Material.IRON_LEGGINGS);
-			item.getItemMeta().setUnbreakable(true);
+			meta.setUnbreakable(true);
+			item.setItemMeta(meta);
 			gp.p.getInventory().setLeggings(item);
 
 			item = new ItemStack(Material.IRON_BOOTS);
-			item.getItemMeta().setUnbreakable(true);
+			meta.setUnbreakable(true);
+			item.setItemMeta(meta);
+
 			gp.p.getInventory().setBoots(item);
 
 			item = new ItemStack(Material.LEATHER_CHESTPLATE);
