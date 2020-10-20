@@ -539,7 +539,8 @@ public class Main extends JavaPlugin {
 
 		for(BreakedBlock bl : GlassBroke){
 			Block b = bl.loc.getBlock();
-			b.setType(bl.material, false);
+			b.setType(bl.material);
+			b.getState().update(true);
 		}
 
 
