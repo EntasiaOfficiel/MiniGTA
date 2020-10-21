@@ -15,9 +15,7 @@ import fr.entasia.minigta.utils.BreakedBlock;
 import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -26,6 +24,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -297,11 +296,11 @@ public class Main extends JavaPlugin {
 		p.sendMessage("§7Tu as rejoins la partie !");
 		Utils.reset(p);
 		p.teleport(waitspawn);
-		ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
+		/*ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 
 		t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"));
 		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
-		p.spigot().sendMessage(new ChatComponent("§7Veux-tu télécharger le ressource pack : ").append(t).append("  §8[§7Non§8]§7").create());
+		p.spigot().sendMessage(new ChatComponent("§7Veux-tu télécharger le ressource pack : ").append(t).append("  §8[§7Non§8]§7").create());*/
 
 
 
@@ -324,6 +323,36 @@ public class Main extends JavaPlugin {
 		meta.setDisplayName("§d§cRetour au spawn EntaGames");
 		item.setItemMeta(meta);
 		Inv.setItem(8, item);
+
+		item = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta bookMeta = (BookMeta) item.getItemMeta();
+		bookMeta.setTitle("§3Règles et Fonctionnement");
+		bookMeta.setAuthor("§bEnta§7sia");
+		BaseComponent[] t = new ComponentBuilder("§r§1§4Cliquer ici")
+				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"))
+				.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Fonctionnel uniquement à partir de la 1.15"))).create();
+
+		BaseComponent[] page = new ComponentBuilder("§4§l§nMiniGTA\n" +
+				"\n" +
+				"§0Faites gagner votre équipe en tuant le plus d'adversaire possible grâce aux §2armes §rexclusives ainsi qu'au §9explosifs §0personnalisés.\n" +
+				"\n§4§l§nPack de Texture" +
+				"§0\n                    ").append(t).create();
+
+		bookMeta.spigot().addPage(page);
+
+		BaseComponent[] page2 = new ComponentBuilder("§4§l§nContrôles\n" +
+				"§l§6Clique Gauche §0pour viser avec la plupart des armes ou pour faire exploser le C4\n" +
+				"\n" +
+				"§l§6Clique Droit §rpour tirer ou poser du C4\n" +
+				"\n" +
+				"§4§l§nChat\n" +
+				"§l§6! §0devant le message pour parler à tous les joueurs de la partie\n"
+				).create();
+
+		bookMeta.spigot().addPage(page2);
+		item.setItemMeta(bookMeta);
+
+		Inv.setItem(4,item);
 
 
 
