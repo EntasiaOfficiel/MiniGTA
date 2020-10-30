@@ -518,10 +518,6 @@ public class Main extends JavaPlugin {
 			gp.p.sendMessage("§7Le meilleur joueur est "+bestName+" avec un total de "+bestKill+" kills");
 		}
 
-		for(GTAPlayer loopGp : pList.values()){
-			loopGp.sb.delete();
-		}
-
 		for (Location loc : mineLocs) {
 			loc.getBlock().setType(Material.AIR);
 		}
