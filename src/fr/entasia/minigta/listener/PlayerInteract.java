@@ -102,15 +102,16 @@ public class PlayerInteract implements Listener {
 
 	@EventHandler
 	public static void onInvClick(InventoryClickEvent e) {
-		if (Main.instance.pList.containsKey(e.getWhoClicked().getName()) && e.getSlotType() == InventoryType.SlotType.ARMOR || Main.instance.pList.containsKey(e.getWhoClicked().getName()) && !Main.instance.hasStarted()) e.setCancelled(true);
-		ItemStack item = e.getCurrentItem();
-		if(Main.instance.pList.containsKey(e.getWhoClicked().getName())){
-			if(item.getType().equals(Material.IRON_TRAPDOOR)){
-				if(e.getWhoClicked().getInventory().contains(Material.IRON_TRAPDOOR)){
-					if(e.getAction()== InventoryAction.MOVE_TO_OTHER_INVENTORY || e.getAction() == InventoryAction.PICKUP_ALL && e.getClickedInventory()!= e.getWhoClicked().getInventory()){
-						e.setCancelled(true);
-						e.getWhoClicked().sendMessage("§cTu ne peux avoir qu'un C4 maximum");
-
+		if(e.getWhoClicked().getWorld()==Main.instance.world && Main.instance.pList.containsKey(e.getWhoClicked().getName())){
+			if(e.getSlotType() == InventoryType.SlotType.ARMOR || !Main.instance.hasStarted()) e.setCancelled(true);
+			else {
+				if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || (e.getAction() == InventoryAction.PICKUP_ALL && e.getClickedInventory() != e.getWhoClicked().getInventory())) {
+					ItemStack item = e.getCurrentItem();
+					if (item != null && item.getType() == Material.IRON_TRAPDOOR) {
+						if (e.getWhoClicked().getInventory().contains(Material.IRON_TRAPDOOR)) {
+							e.setCancelled(true);
+							e.getWhoClicked().sendMessage("§cTu ne peux avoir qu'un C4 maximum");
+						}
 					}
 				}
 			}
