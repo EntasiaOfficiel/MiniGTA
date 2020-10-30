@@ -3,6 +3,7 @@ package fr.entasia.minigta.items;
 import fr.entasia.apis.nbt.ItemNBT;
 import fr.entasia.apis.nbt.NBTComponent;
 import fr.entasia.apis.nbt.NBTTypes;
+import fr.entasia.minigta.Main;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,6 +31,7 @@ public class C4Manager {
 
 
         nbt.setValue(NBTTypes.String, "loc","");
+        nbt.setValue(NBTTypes.Int, "rand", Main.r.nextInt(1024));
 
         ItemNBT.addNBT(item, nbt);
 

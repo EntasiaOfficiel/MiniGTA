@@ -49,8 +49,6 @@ public class SBManager {
 
 				objective.getScore(ligne.split(":")[0] + ": "+ Main.instance.BluePoint).setScore(4);
 			}
-
-
 		}
 	}
 
