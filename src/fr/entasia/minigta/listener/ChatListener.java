@@ -12,7 +12,6 @@ public class ChatListener implements Listener {
 	
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e) {
-		if(e.getMessage().startsWith(">_")) return;
 		if(!Main.instance.hasStarted()) return;
 		GPlayer p = Main.instance.pList.get(e.getPlayer().getName());
 		if(p!=null){

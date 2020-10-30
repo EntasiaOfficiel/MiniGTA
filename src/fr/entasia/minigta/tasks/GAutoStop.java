@@ -2,8 +2,8 @@ package fr.entasia.minigta.tasks;
 
 import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.minigta.Main;
-import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
+import fr.entasia.minigta.utils.SBManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,7 +17,7 @@ public class GAutoStop extends BukkitRunnable{
 	public void run() {
 
 		Main.instance.timer--;
-		for(Map.Entry<Player, CustomScoreboardManager> sign : Main.instance.boards.entrySet()){
+		for(Map.Entry<Player, SBManager> sign : Main.instance.boards.entrySet()){
 			String dateformat = new SimpleDateFormat("m:ss").format(Main.instance.timer*1000);
 			sign.getValue().refreshTime(dateformat);
 		}

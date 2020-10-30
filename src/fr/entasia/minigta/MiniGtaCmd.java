@@ -1,6 +1,5 @@
 package fr.entasia.minigta;
 
-import fr.entasia.minigta.items.C4Manager;
 import fr.entasia.minigta.utils.GPlayer;
 import org.bukkit.Location;
 import org.bukkit.command.Command;

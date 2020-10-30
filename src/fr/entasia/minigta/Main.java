@@ -3,7 +3,8 @@ package fr.entasia.minigta;
 import com.shampaggon.crackshot.CSUtility;
 import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.apis.sql.SQLConnection;
-import fr.entasia.egtools.Utils;
+import fr.entasia.apis.utils.PlayerUtils;
+import fr.entasia.egtools.EGUtils;
 import fr.entasia.egtools.utils.MoneyUtils;
 import fr.entasia.minigta.items.C4Manager;
 import fr.entasia.minigta.listener.*;
@@ -12,11 +13,15 @@ import fr.entasia.minigta.tasks.GAutoStop;
 import fr.entasia.minigta.tasks.GNoPvP;
 import fr.entasia.minigta.tasks.GRespawn;
 import fr.entasia.minigta.utils.BreakedBlock;
-import fr.entasia.minigta.utils.CustomScoreboardManager;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
-import net.md_5.bungee.api.chat.*;
+import fr.entasia.minigta.utils.SBManager;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,11 +39,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -52,7 +52,7 @@ public class Main extends JavaPlugin {
 	public Map<String, GPlayer> pList = new HashMap<>();
 	public Map<String, Integer> mapVotes = new HashMap<>();
 	public Map<String, FileConfiguration> mapFiles = new HashMap<>();
-	public Map<Player, CustomScoreboardManager> boards = new HashMap<>();
+	public Map<Player, SBManager> boards = new HashMap<>();
 	public List<String> BlueTeam = new ArrayList<>();
 	public List<String> RedTeam = new ArrayList<>();
 	public File chestFile = new File(getDataFolder(), "chest.yml");
@@ -72,6 +72,7 @@ public class Main extends JavaPlugin {
 	public List<BreakedBlock> GlassBroke = new ArrayList<>();
 	public int timer = 20;
 	public static SQLConnection sql;
+	public static Random r = new Random();
 
 	@Override
 	public void onEnable() {
@@ -143,8 +144,8 @@ public class Main extends JavaPlugin {
 		forcejoinplayer();
 		GameChrono = new GAutoStop();
 		GameChrono.runTaskTimer(this, 0, 20);
-		for(Map.Entry<Player, CustomScoreboardManager> sb : boards.entrySet()){
-			CustomScoreboardManager scoreboard = sb.getValue();
+		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
+			SBManager scoreboard = sb.getValue();
 			scoreboard.sendStartingLine();
 		}
 
@@ -162,7 +163,7 @@ public class Main extends JavaPlugin {
 			}
 		}
 		for (GPlayer gp : pList.values()) {
-			gp.p.setMaxHealth(40);
+			gp.p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
 			gp.p.setHealth(40);
 			gp.p.setGameMode(GameMode.SURVIVAL);
 			gp.p.getInventory().clear();
@@ -209,7 +210,7 @@ public class Main extends JavaPlugin {
 
 	public void quitPlayer(GPlayer gp, boolean manual) {
 		if(manual){
-			Utils.tpSpawn(gp.p);
+			EGUtils.tpSpawn(gp.p);
 			gp.p.sendMessage("§7Tu as quitté la partie !");
 		}
 		if(gp.pack){
@@ -229,8 +230,8 @@ public class Main extends JavaPlugin {
 			boards.remove(gp.p);
 
 		}
-		for(Map.Entry<Player, CustomScoreboardManager> sb : boards.entrySet()){
-			CustomScoreboardManager scoreboard = sb.getValue();
+		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
+			SBManager scoreboard = sb.getValue();
 			scoreboard.refreshWaiting();
 		}
 		if(state==GState.PLAYING) {
@@ -240,7 +241,7 @@ public class Main extends JavaPlugin {
 				endGame();
 			}
 		}else if(state==GState.STARTING){
-			for(Map.Entry<Player, CustomScoreboardManager> sign : boards.entrySet()){
+			for(Map.Entry<Player, SBManager> sign : boards.entrySet()){
 				sign.getKey().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 			}
 			for(Map.Entry<String,Integer> entry: mapVotes.entrySet()){
@@ -263,7 +264,7 @@ public class Main extends JavaPlugin {
 			boards.clear();
 			for(GPlayer gplayer : instance.pList.values()){
 				Player p = gplayer.p;
-				CustomScoreboardManager scoreboard = new CustomScoreboardManager(p);
+				SBManager scoreboard = new SBManager(p);
 				scoreboard.sendWaitingLine();
 				scoreboard.set();
 				boards.put(p,scoreboard);
@@ -283,18 +284,18 @@ public class Main extends JavaPlugin {
 
 		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
 		pList.put(p.getName(), new GPlayer(p));
-		for(Map.Entry<Player, CustomScoreboardManager> sb : boards.entrySet()){
-			CustomScoreboardManager scoreboard = sb.getValue();
+		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
+			SBManager scoreboard = sb.getValue();
 			scoreboard.refreshWaiting();
 		}
-		CustomScoreboardManager scoreboard = new CustomScoreboardManager(p);
+		SBManager scoreboard = new SBManager(p);
 		scoreboard.sendWaitingLine();
 		scoreboard.set();
 		boards.put(p,scoreboard);
 
 
-		p.sendMessage("§7Tu as rejoins la partie !");
-		Utils.reset(p);
+		p.sendMessage("§7Tu as rejoint la partie !");
+		PlayerUtils.hardReset(p);
 		p.teleport(waitspawn);
 		/*ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 
@@ -481,13 +482,13 @@ public class Main extends JavaPlugin {
 			if(p.team.equals("blue"))RedPoint++;
 			else BluePoint++;
 			p.death++;
-			p.p.setHealth(p.p.getMaxHealth());
+			p.p.setHealth(p.p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			p.p.setFoodLevel(20);
 			p.p.setFireTicks(0);
 			PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 5, 100);
 			p.p.addPotionEffect(effect);
 			p.p.teleport(BlueSpawn);
-			for(Map.Entry<Player, CustomScoreboardManager> sign : boards.entrySet()){
+			for(Map.Entry<Player, SBManager> sign : boards.entrySet()){
 				sign.getValue().refreshScore();
 			}
 			if(timer > 5){
@@ -515,7 +516,7 @@ public class Main extends JavaPlugin {
 		state = GState.ENDING;
 		for (GPlayer gp : pList.values()){
 			gp.p.getActivePotionEffects().clear();
-			Utils.tpSpawn(gp.p);
+			EGUtils.tpSpawn(gp.p);
 			if(gp.pack){
 				gp.p.setResourcePack("https://www.dropbox.com/s/2y4y9qxdl5w35db/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
 			}
@@ -558,7 +559,7 @@ public class Main extends JavaPlugin {
 			gp.p.sendMessage("§7Vous avez fait "+gp.kill+" kills et êtes mort "+gp.death+" fois");
 			gp.p.sendMessage("§7Le meilleur joueur est "+bestName+" avec un total de "+bestKill+" kills");
 		}
-		for(Map.Entry<Player, CustomScoreboardManager> sign : boards.entrySet()){
+		for(Map.Entry<Player, SBManager> sign : boards.entrySet()){
 			sign.getKey().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 		}
 
@@ -593,7 +594,7 @@ public class Main extends JavaPlugin {
 			p.teleport(Main.instance.RedSpawn);
 		}
 		p.setGameMode(GameMode.SURVIVAL);
-		p.setHealth(p.getMaxHealth());
+		p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 		p.setFoodLevel(20);
 		for(GPlayer gp: Main.instance.pList.values()){
 			if(gp.p.getDisplayName().equalsIgnoreCase(p.getDisplayName())){
@@ -605,31 +606,32 @@ public class Main extends JavaPlugin {
 		noPvP.runTaskTimer(Main.instance,0,20);
 
 	}
-	public byte[] calcSHA1Hash(String resourcepackUrl) {
-		try {
-			URL url = new URL(resourcepackUrl);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-			if (connection.getContentLength() <= 0) {
-				return null;
-			}
-			byte[] resourcePackBytes = new byte[connection.getContentLength()];
-			InputStream in = connection.getInputStream();
 
-			int b;
-			int i = 0;
-			while ((b = in.read()) != -1) {
-				resourcePackBytes[i] = (byte) b;
-				i++;
-			}
-
-			in.close();
-
-			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			return md.digest(resourcePackBytes);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	public byte[] calcSHA1Hash(String resourcepackUrl) {
+//		try {
+//			URL url = new URL(resourcepackUrl);
+//			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//			connection.setRequestMethod("GET");
+//			if (connection.getContentLength() <= 0) {
+//				return null;
+//			}
+//			byte[] resourcePackBytes = new byte[connection.getContentLength()];
+//			InputStream in = connection.getInputStream();
+//
+//			int b;
+//			int i = 0;
+//			while ((b = in.read()) != -1) {
+//				resourcePackBytes[i] = (byte) b;
+//				i++;
+//			}
+//
+//			in.close();
+//
+//			MessageDigest md = MessageDigest.getInstance("SHA-1");
+//			return md.digest(resourcePackBytes);
+//		} catch (NoSuchAlgorithmException | IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 }

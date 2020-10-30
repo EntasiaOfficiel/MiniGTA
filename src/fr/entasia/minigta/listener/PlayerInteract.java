@@ -5,13 +5,11 @@ import fr.entasia.apis.nbt.NBTComponent;
 import fr.entasia.apis.nbt.NBTTypes;
 import fr.entasia.apis.utils.ItemUtils;
 import fr.entasia.minigta.Main;
-import fr.entasia.minigta.items.C4Manager;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.VoteInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,7 +47,7 @@ public class PlayerInteract implements Listener {
 						NBTComponent nbt = ItemNBT.getNBT(item);
 						if(nbt==null)return;
 						String loc = (String) nbt.getValue(NBTTypes.String ,"loc");
-						if(loc == "")return;
+						if(loc.equals(""))return;
 
 						String[] locs = loc.split(";");
 						double x = Double.parseDouble(locs[0].split(",")[0]);

@@ -75,7 +75,9 @@ public class GPlayer {
 		return kill;
 	}
 
-	public boolean hasVoted(){ return hasVoted();}
+	public boolean hasVoted(){
+		throw new UnsupportedOperationException();
+	}
 
 	public String getColor() {
 		if(team.equals("blue"))return"§9";

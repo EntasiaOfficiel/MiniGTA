@@ -17,7 +17,7 @@ public class GNoPvP extends BukkitRunnable {
 		timer--;
 		if(timer==0){
 			for(GPlayer gp: Main.instance.pList.values()){
-				if(gp.p.getDisplayName().equalsIgnoreCase(p.getDisplayName())){
+				if(gp.p.getUniqueId()==p.getUniqueId()){
 					gp.noPvp=false;
 				}
 			}

@@ -3,13 +3,11 @@ package fr.entasia.minigta.items;
 import fr.entasia.apis.nbt.ItemNBT;
 import fr.entasia.apis.nbt.NBTComponent;
 import fr.entasia.apis.nbt.NBTTypes;
-import fr.entasia.apis.nbt.NBTer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class C4Manager {
 
