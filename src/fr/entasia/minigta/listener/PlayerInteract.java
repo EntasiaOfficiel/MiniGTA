@@ -5,13 +5,12 @@ import fr.entasia.apis.nbt.NBTComponent;
 import fr.entasia.apis.nbt.NBTTypes;
 import fr.entasia.apis.utils.ItemUtils;
 import fr.entasia.minigta.Main;
-import fr.entasia.minigta.utils.GPlayer;
+import fr.entasia.minigta.utils.GTAPlayer;
 import fr.entasia.minigta.utils.VoteInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +19,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class PlayerInteract implements Listener {
 	    Player p = e.getPlayer();
 		if(e.getAction().toString().startsWith("LE") || e.getAction().toString().startsWith("RI")) {
 			if (e.getItem() != null && ItemUtils.hasName(e.getItem())) {
-				GPlayer gp = Main.instance.pList.get(p.getName());
+				GTAPlayer gp = Main.instance.pList.get(p.getName());
 				if(gp==null)return;
 				if (e.getItem().getItemMeta().getDisplayName().equals("§cRejoindre l'équipe Rouge !"))
 					gp.setTeam("red");

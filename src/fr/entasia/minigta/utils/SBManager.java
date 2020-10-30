@@ -10,6 +10,15 @@ public class SBManager extends ScoreBoardHelper {
 		super(p, "minigta", "§cMini§6GTA");
 	}
 
+	@Override
+	protected void setSlots() {
+
+	}
+
+	// -----
+	// wait mode
+	// -----
+
 	public void setWaitMode(){
 		updateWaitPlayers();
 		dynamicLine(1, " ");
@@ -19,8 +28,9 @@ public class SBManager extends ScoreBoardHelper {
 		staticLine(2, "§7Joueurs connectés : "+Main.instance.pList.size());
 	}
 
-
-
+	// -----
+	// wait mode
+	// -----
 
 	public void setGameMode(){
 		clear();
@@ -40,11 +50,6 @@ public class SBManager extends ScoreBoardHelper {
 	public void refreshScore(){
 		dynamicLine(4, "§9Bleus : "+Main.instance.BluePoint);
 		dynamicLine(2, "§cRouges : "+Main.instance.RedPoint);
-	}
-
-	@Override
-	protected void setSlots() {
-
 	}
 
 }

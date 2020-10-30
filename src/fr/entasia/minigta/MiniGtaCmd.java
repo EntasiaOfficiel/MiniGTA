@@ -1,6 +1,6 @@
 package fr.entasia.minigta;
 
-import fr.entasia.minigta.utils.GPlayer;
+import fr.entasia.minigta.utils.GTAPlayer;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,33 +32,12 @@ public class MiniGtaCmd implements CommandExecutor {
 					break;
 				}
 				case "leave": {
-					GPlayer gp = Main.instance.pList.get(p.getName());
+					GTAPlayer gp = Main.instance.pList.get(p.getName());
 					if (gp != null) Main.instance.quitPlayer(gp, true);
 					else sender.sendMessage("Vous n'êtes pas dans une partie");
 					break;
 				}
-				case "chest": {
-					if (p.hasPermission("gta.chest")) {
-						Location l = p.getLocation();
-						int x = (int) l.getX();
-						int y = (int) l.getY();
-						int z = (int) l.getZ();
-						String string = x + "," + y + "," + z;
-						ConfigurationSection cs = Main.instance.chestConfig.getConfigurationSection("chest");
-						int t = cs.getKeys(false).size() + 1;
-						String s = Integer.toString(t);
-						Main.instance.chestConfig.set("chest." + s, string);
-						try {
-							Main.instance.chestConfig.save(Main.instance.chestFile);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-					break;
-				}
 				case "reload": {
-					Main.instance.chestFile = Main.instance.chestFile.getAbsoluteFile();
-					Main.instance.chestConfig = YamlConfiguration.loadConfiguration(Main.instance.chestFile);
 					Main.instance.reloadConfig();
 					Main.instance.mapVotes.clear();
 					Main.instance.mapFiles.clear();
@@ -72,7 +51,7 @@ public class MiniGtaCmd implements CommandExecutor {
 				}
 
 				case "pack": {
-					GPlayer gp = Main.instance.pList.get(p.getName());
+					GTAPlayer gp = Main.instance.pList.get(p.getName());
 					if (gp == null) {
 						p.sendMessage("§7Tu n'es pas dans une partie de MiniGTA !");
 						return true;

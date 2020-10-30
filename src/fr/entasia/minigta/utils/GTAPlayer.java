@@ -7,9 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-public class GPlayer {
+public class GTAPlayer {
 
 	public Player p;
+	public SBManager sb;
 	public String team="";
 	public int kill=0;
 	public int death=0;
@@ -18,8 +19,9 @@ public class GPlayer {
 	public String vote = "";
 	public boolean noPvp = false;
 
-	public GPlayer(Player p){
+	public GTAPlayer(Player p){
 		this.p = p;
+		this.sb = new SBManager(p);
 	}
 
 	public void setTeam(String team){

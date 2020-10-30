@@ -5,8 +5,8 @@ import com.shampaggon.crackshot.events.WeaponPrepareShootEvent;
 import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.minigta.Main;
 import fr.entasia.minigta.tasks.FireExtinguishTask;
-import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
+import fr.entasia.minigta.utils.GTAPlayer;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -47,8 +47,8 @@ public class DamageListener implements Listener {
 	@EventHandler
 	public void pvp(EntityDamageByEntityEvent e) {
 		if(e.getEntity().getWorld()==Main.instance.world&&e.getEntity() instanceof Player && Main.instance.hasStarted()) {
-			GPlayer gp = Main.instance.pList.get(e.getEntity().getName());
-			GPlayer gp2 = Main.instance.pList.get(e.getDamager().getName());
+			GTAPlayer gp = Main.instance.pList.get(e.getEntity().getName());
+			GTAPlayer gp2 = Main.instance.pList.get(e.getDamager().getName());
 			if(gp!=null&&gp2!=null&&gp.team.equals(gp2.team)&&gp2.p.getInventory().getItemInMainHand().getType()!=Material.IRON_SWORD){
 				e.setCancelled(true);
 				gp2.p.sendMessage("§cVous êtes dans la même équipe !");
@@ -70,7 +70,7 @@ public class DamageListener implements Listener {
 	@EventHandler
 	public void damage(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player){
-			GPlayer gp = Main.instance.pList.get(e.getEntity().getName());
+			GTAPlayer gp = Main.instance.pList.get(e.getEntity().getName());
 
 			if(gp==null)return;
 
@@ -97,8 +97,8 @@ public class DamageListener implements Listener {
 
 		if(e.getVictim() instanceof Player && Main.instance.hasStarted()){
 
-			GPlayer victim = Main.instance.pList.get(e.getVictim().getName());
-			GPlayer attacker = Main.instance.pList.get(e.getPlayer().getName());
+			GTAPlayer victim = Main.instance.pList.get(e.getVictim().getName());
+			GTAPlayer attacker = Main.instance.pList.get(e.getPlayer().getName());
 			if(victim!=null&&attacker!=null){
 				if(victim.team.equals(attacker.team)) {
 					if (attacker != victim) attacker.p.sendMessage("§cVous êtes dans la même équipe !");

@@ -13,9 +13,8 @@ import fr.entasia.minigta.tasks.GAutoStop;
 import fr.entasia.minigta.tasks.GNoPvP;
 import fr.entasia.minigta.tasks.GRespawn;
 import fr.entasia.minigta.utils.BreakedBlock;
-import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
-import fr.entasia.minigta.utils.SBManager;
+import fr.entasia.minigta.utils.GTAPlayer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -35,10 +34,8 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -49,10 +46,9 @@ public class Main extends JavaPlugin {
 
 	public static Main instance;
 	public Location waitspawn;
-	public Map<String, GPlayer> pList = new HashMap<>();
+	public Map<String, GTAPlayer> pList = new HashMap<>();
 	public Map<String, Integer> mapVotes = new HashMap<>();
 	public Map<String, FileConfiguration> mapFiles = new HashMap<>();
-	public Map<Player, SBManager> boards = new HashMap<>();
 	public List<String> BlueTeam = new ArrayList<>();
 	public List<String> RedTeam = new ArrayList<>();
 	public FileConfiguration config;
@@ -132,9 +128,8 @@ public class Main extends JavaPlugin {
 		forcejoinplayer();
 		GameChrono = new GAutoStop();
 		GameChrono.runTaskTimer(this, 0, 20);
-		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
-			SBManager scoreboard = sb.getValue();
-			scoreboard.setGameMode();
+		for(GTAPlayer loopGp : pList.values()){
+			loopGp.sb.setGameMode();
 		}
 
 
@@ -150,7 +145,7 @@ public class Main extends JavaPlugin {
 				break;
 			}
 		}
-		for (GPlayer gp : pList.values()) {
+		for (GTAPlayer gp : pList.values()) {
 			gp.p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
 			gp.p.setHealth(40);
 			gp.p.setGameMode(GameMode.SURVIVAL);
@@ -196,7 +191,7 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	public void quitPlayer(GPlayer gp, boolean manual) {
+	public void quitPlayer(GTAPlayer gp, boolean manual) {
 		if(manual){
 			EGUtils.tpSpawn(gp.p);
 			gp.p.sendMessage("§7Tu as quitté la partie !");
@@ -210,18 +205,8 @@ public class Main extends JavaPlugin {
 		BlueTeam.remove(gp.p.getName());
 		RedTeam.remove(gp.p.getName());
 		sendMsg(ChatComponent.create(c+gp.p.getDisplayName()+"§7 a quitté la partie !"));
-		if(boards.containsKey(gp.p)){
-			new BukkitRunnable() {
-				public void run() {
-					gp.p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-				}
-			}.runTaskLater(Main.instance, 20);
-			boards.remove(gp.p);
-
-		}
-		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
-			SBManager scoreboard = sb.getValue();
-			scoreboard.updateWaitPlayers();
+		for(GTAPlayer loopGp : pList.values()){
+			loopGp.sb.updateWaitPlayers();
 		}
 		if(state==GState.PLAYING) {
 			if (RedTeam.size() == 0 || BlueTeam.size() == 0) {
@@ -230,9 +215,6 @@ public class Main extends JavaPlugin {
 				endGame();
 			}
 		}else if(state==GState.STARTING){
-			for(Map.Entry<Player, SBManager> sign : boards.entrySet()){
-				sign.getKey().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-			}
 			for(Map.Entry<String,Integer> entry: mapVotes.entrySet()){
 				if(entry.getKey().equalsIgnoreCase(gp.vote)){
 					int value = entry.getValue();
@@ -243,26 +225,17 @@ public class Main extends JavaPlugin {
 			if(instance.pList.size() < instance.config.getInt("config.minPlayers")){
 				GameStarter.cancel();
 				sendMsg(ChatComponent.create("§7Lancement de la partie annulé !"));
-				for(GPlayer gp2 : instance.pList.values()) {
+				for(GTAPlayer gp2 : instance.pList.values()) {
 				    gp.p.getInventory().setItem(0,null);
 					gp2.p.setLevel(0);
 				}
 				state=GState.WAITING;
 			}
-			boards.clear();
-			for(GPlayer gplayer : instance.pList.values()){
-				Player p = gplayer.p;
-				SBManager scoreboard = new SBManager(p);
-				scoreboard.setWaitMode();
-				scoreboard.set();
-				boards.put(p,scoreboard);
-			}
-
 		}
 	}
 
 	public void sendMsg(BaseComponent[] msg) {
-		for(GPlayer i : pList.values()){
+		for(GTAPlayer i : pList.values()){
 			i.p.sendMessage(msg);
 		}
 
@@ -271,47 +244,39 @@ public class Main extends JavaPlugin {
 
 
 		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
-		pList.put(p.getName(), new GPlayer(p));
-		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
-			SBManager scoreboard = sb.getValue();
-			scoreboard.refreshWaiting();
+		pList.put(p.getName(), new GTAPlayer(p));
+		for(GTAPlayer loopGp : pList.values()){
+			loopGp.sb.updateWaitPlayers();
 		}
-		SBManager scoreboard = new SBManager(p);
-		scoreboard.setWaitMode();
-		scoreboard.set();
-		boards.put(p,scoreboard);
-
 
 		p.sendMessage("§7Tu as rejoint la partie !");
 		PlayerUtils.hardReset(p);
 		p.teleport(waitspawn);
-		/*ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 
+		/*ChatComponent t = new ChatComponent("§8[§7Oui§8]§7");
 		t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/minigta pack"));
 		t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChatComponent.create("§7Clique pour activer le pack !")));
 		p.spigot().sendMessage(new ChatComponent("§7Veux-tu télécharger le ressource pack : ").append(t).append("  §8[§7Non§8]§7").create());*/
 
 
-
-
-		Inventory Inv= p.getInventory();
+		Inventory inv = p.getInventory();
 		ItemStack item = new ItemStack(Material.LAPIS_BLOCK);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName("§9Rejoindre l'équipe Bleue !");
 		item.setItemMeta(meta);
-		Inv.setItem(2, item);
+		inv.setItem(2, item);
 
 		item = new ItemStack(Material.REDSTONE_BLOCK);
 		meta = item.getItemMeta();
 		meta.setDisplayName("§cRejoindre l'équipe Rouge !");
 		item.setItemMeta(meta);
-		Inv.setItem(6, item);
+		inv.setItem(6, item);
 
 		item = new ItemStack(Material.ORANGE_BED);
 		meta = item.getItemMeta();
 		meta.setDisplayName("§d§cRetour au spawn EntaGames");
 		item.setItemMeta(meta);
-		Inv.setItem(8, item);
+		inv.setItem(8, item);
 
 		item = new ItemStack(Material.WRITTEN_BOOK);
 		BookMeta bookMeta = (BookMeta) item.getItemMeta();
@@ -342,7 +307,7 @@ public class Main extends JavaPlugin {
 		item.setItemMeta(bookMeta);
 
 		p.openBook(item);
-		Inv.setItem(4,item);
+		inv.setItem(4,item);
 
 
 
@@ -354,8 +319,8 @@ public class Main extends JavaPlugin {
 				GameStarter = new GAutoStart();
 				GameStarter.runTaskTimer(this, 0, 20);
 				state = GState.STARTING;
-                for(Map.Entry<String, GPlayer> entry: pList.entrySet()){
-                    GPlayer gp = entry.getValue();
+                for(Map.Entry<String, GTAPlayer> entry: pList.entrySet()){
+                    GTAPlayer gp = entry.getValue();
                     item = new ItemStack(Material.PAPER);
                     meta = item.getItemMeta();
                     meta.setDisplayName("§7Voter pour la map");
@@ -381,7 +346,7 @@ public class Main extends JavaPlugin {
 			meta = item.getItemMeta();
 			meta.setDisplayName("§7Voter pour la map");
 			item.setItemMeta(meta);
-			Inv.setItem(0,item);
+			inv.setItem(0,item);
 		}
 	}
 
@@ -458,7 +423,7 @@ public class Main extends JavaPlugin {
 		
 	}
 	private void forcejoinplayer() {
-		for(GPlayer pi : pList.values()) {
+		for(GTAPlayer pi : pList.values()) {
 			if(!RedTeam.contains(pi.p.getName())&&!BlueTeam.contains(pi.p.getName())) {
 				if(RedTeam.size() < BlueTeam.size()) {
 					pi.setTeam("red");
@@ -469,28 +434,26 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	public void eliminate(GPlayer p) {
-			if(p.team.equals("blue"))RedPoint++;
-			else BluePoint++;
-			p.death++;
-			p.p.setHealth(p.p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-			p.p.setFoodLevel(20);
-			p.p.setFireTicks(0);
-			PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 5, 100);
-			p.p.addPotionEffect(effect);
-			p.p.teleport(BlueSpawn);
-			for(Map.Entry<Player, SBManager> sign : boards.entrySet()){
-				sign.getValue().refreshScore();
-			}
-			if(timer > 5){
-				p.p.setGameMode(GameMode.SPECTATOR);
-				new GRespawn(p.p).runTaskTimer(this, 0, 20);
-			}else{
-				if(p.team.equals("blue"))p.p.teleport(BlueSpawn);
-				else p.p.teleport(RedSpawn);
+	public void eliminate(GTAPlayer p) {
+		if (p.team.equals("blue")) RedPoint++;
+		else BluePoint++;
+		p.death++;
+		p.p.setHealth(p.p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		p.p.setFoodLevel(20);
+		p.p.setFireTicks(0);
+		PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 5, 100);
+		p.p.addPotionEffect(effect);
+		p.p.teleport(BlueSpawn);
+		for (GTAPlayer loopGp : pList.values()) {
+			loopGp.sb.refreshScore();
 		}
-		
-		
+		if (timer > 5) {
+			p.p.setGameMode(GameMode.SPECTATOR);
+			new GRespawn(p.p).runTaskTimer(this, 0, 20);
+		} else {
+			if (p.team.equals("blue")) p.p.teleport(BlueSpawn);
+			else p.p.teleport(RedSpawn);
+		}
 	}
 
 
@@ -505,7 +468,7 @@ public class Main extends JavaPlugin {
 			lostTeam="blue";
 		}
 		state = GState.ENDING;
-		for (GPlayer gp : pList.values()){
+		for (GTAPlayer gp : pList.values()){
 			gp.p.getActivePotionEffects().clear();
 			EGUtils.tpSpawn(gp.p);
 			gp.p.setGlowing(false);
@@ -547,12 +510,13 @@ public class Main extends JavaPlugin {
 
 
 
-		for(GPlayer gp : pList.values()){
+		for(GTAPlayer gp : pList.values()){
 			gp.p.sendMessage("§7Vous avez fait "+gp.kill+" kills et êtes mort "+gp.death+" fois");
 			gp.p.sendMessage("§7Le meilleur joueur est "+bestName+" avec un total de "+bestKill+" kills");
 		}
-		for(Map.Entry<Player, SBManager> sign : boards.entrySet()){
-			sign.getKey().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+
+		for(GTAPlayer loopGp : pList.values()){
+			loopGp.sb.delete();
 		}
 
 		for (Location loc : mineLocs) {
@@ -568,7 +532,6 @@ public class Main extends JavaPlugin {
 
 		GlassBroke.clear();
 		mineLocs.clear();
-		boards.clear();
 		pList.clear();
 		RedTeam.clear();
 		BlueTeam.clear();
@@ -588,7 +551,7 @@ public class Main extends JavaPlugin {
 		p.setGameMode(GameMode.SURVIVAL);
 		p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 		p.setFoodLevel(20);
-		for(GPlayer gp: Main.instance.pList.values()){
+		for(GTAPlayer gp: Main.instance.pList.values()){
 			if(gp.p.getDisplayName().equalsIgnoreCase(p.getDisplayName())){
 				gp.noPvp=true;
 			}

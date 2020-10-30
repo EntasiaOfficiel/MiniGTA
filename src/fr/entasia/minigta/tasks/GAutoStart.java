@@ -1,6 +1,6 @@
 package fr.entasia.minigta.tasks;
 
-import fr.entasia.minigta.utils.GPlayer;
+import fr.entasia.minigta.utils.GTAPlayer;
 import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -18,7 +18,7 @@ public class GAutoStart extends BukkitRunnable{
 			instance.startGame();
 			cancel();
 		}
-		for(GPlayer gp : instance.pList.values()) {
+		for(GTAPlayer gp : instance.pList.values()) {
 			gp.p.setLevel(timer);
 		}
 		timer--;

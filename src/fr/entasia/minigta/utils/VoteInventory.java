@@ -23,7 +23,7 @@ public class VoteInventory {
 		public void onMenuClick(MenuClickEvent e) {
 			for (Map.Entry<String, FileConfiguration> entry : instance.mapFiles.entrySet()) {
 				if (e.item.getItemMeta().getDisplayName().contains(entry.getKey())) {
-					GPlayer gp = Main.instance.pList.get(e.player.getName());
+					GTAPlayer gp = Main.instance.pList.get(e.player.getName());
 					if (gp.hasVoted) {
 						e.player.sendMessage("§7Vous ne pouvez pas voter 2 fois");
 						return;
