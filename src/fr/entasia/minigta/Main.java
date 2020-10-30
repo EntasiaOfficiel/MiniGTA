@@ -244,7 +244,11 @@ public class Main extends JavaPlugin {
 
 
 		instance.sendMsg(ChatComponent.create("§7"+p.getName() + " a rejoint la partie !"));
-		pList.put(p.getName(), new GTAPlayer(p));
+
+		GTAPlayer gp = new GTAPlayer(p);
+		gp.sb.setWaitMode();
+		pList.put(p.getName(), gp);
+
 		for(GTAPlayer loopGp : pList.values()){
 			loopGp.sb.updateWaitPlayers();
 		}
@@ -319,13 +323,12 @@ public class Main extends JavaPlugin {
 				GameStarter = new GAutoStart();
 				GameStarter.runTaskTimer(this, 0, 20);
 				state = GState.STARTING;
-                for(Map.Entry<String, GTAPlayer> entry: pList.entrySet()){
-                    GTAPlayer gp = entry.getValue();
+                for(GTAPlayer loopGp : pList.values()){
                     item = new ItemStack(Material.PAPER);
                     meta = item.getItemMeta();
                     meta.setDisplayName("§7Voter pour la map");
                     item.setItemMeta(meta);
-                    gp.p.getInventory().setItem(0,item);
+                    loopGp.p.getInventory().setItem(0, item);
                 }
 				sendMsg(ChatComponent.create("§7La partie va commencer dans 1 minute !"));
 				for (int i = 1; new File(Main.instance.getDataFolder(), "map" + i + ".yml").exists(); i++) {

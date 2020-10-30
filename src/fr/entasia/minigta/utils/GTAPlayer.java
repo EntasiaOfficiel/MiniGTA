@@ -22,6 +22,7 @@ public class GTAPlayer {
 	public GTAPlayer(Player p){
 		this.p = p;
 		this.sb = new SBManager(p);
+		this.sb.reload();
 	}
 
 	public void setTeam(String team){

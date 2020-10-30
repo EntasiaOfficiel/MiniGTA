@@ -25,7 +25,7 @@ public class SBManager extends ScoreBoardHelper {
 	}
 
 	public void updateWaitPlayers(){
-		staticLine(2, "§7Joueurs connectés : "+Main.instance.pList.size());
+		dynamicLine(2, "§7Joueurs connectés : "+Main.instance.pList.size());
 	}
 
 	// -----
