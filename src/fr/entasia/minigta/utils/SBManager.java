@@ -55,13 +55,12 @@ public class SBManager {
 	}
 
 	public void refreshWaiting(){
-		for(String ligne : scoreboard.getEntries()){
-			if(ligne.contains("§7Joueurs connectés")){
+		for(String ligne : scoreboard.getEntries()) {
+			if (ligne.contains("§7Joueurs connectés")) {
 				scoreboard.resetScores(ligne);
-
-				objective.getScore(ligne.split(":")[0] + " "+ Main.instance.pList.size()).setScore(1);
 			}
 		}
+		objective.getScore("§7Joueurs connectés : "+ Main.instance.pList.size()).setScore(1);
 	}
 
 	public void sendWaitingLine(){
