@@ -16,23 +16,16 @@ import fr.entasia.minigta.utils.BreakedBlock;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
 import fr.entasia.minigta.utils.SBManager;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.minecraft.server.v1_15_R1.EnumHand;
-import net.minecraft.server.v1_15_R1.PacketDataSerializer;
-import net.minecraft.server.v1_15_R1.PacketPlayOutCustomPayload;
-import net.minecraft.server.v1_15_R1.PacketPlayOutOpenBook;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -62,9 +55,7 @@ public class Main extends JavaPlugin {
 	public Map<Player, SBManager> boards = new HashMap<>();
 	public List<String> BlueTeam = new ArrayList<>();
 	public List<String> RedTeam = new ArrayList<>();
-	public File chestFile = new File(getDataFolder(), "chest.yml");
 	public FileConfiguration config;
-	public FileConfiguration chestConfig;
 	public GState state;
 	public GAutoStart GameStarter;
 	public GAutoStop GameChrono;
@@ -90,16 +81,6 @@ public class Main extends JavaPlugin {
 
 			saveDefaultConfig();
 			world = Bukkit.getWorld(getConfig().getString("position.world"));
-
-			if (!chestFile.exists()) {
-				try {
-					chestFile.createNewFile();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			chestConfig = YamlConfiguration.loadConfiguration(chestFile);
 
 			String[] d = config.getString("position.waitpoint").split(",");
 			waitspawn = new Location(world, Double.parseDouble(d[0]), Double.parseDouble(d[1]), Double.parseDouble(d[2]));
@@ -153,7 +134,7 @@ public class Main extends JavaPlugin {
 		GameChrono.runTaskTimer(this, 0, 20);
 		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
 			SBManager scoreboard = sb.getValue();
-			scoreboard.sendStartingLine();
+			scoreboard.setGameMode();
 		}
 
 
@@ -240,7 +221,7 @@ public class Main extends JavaPlugin {
 		}
 		for(Map.Entry<Player, SBManager> sb : boards.entrySet()){
 			SBManager scoreboard = sb.getValue();
-			scoreboard.refreshWaiting();
+			scoreboard.updateWaitPlayers();
 		}
 		if(state==GState.PLAYING) {
 			if (RedTeam.size() == 0 || BlueTeam.size() == 0) {
@@ -261,7 +242,6 @@ public class Main extends JavaPlugin {
 			}
 			if(instance.pList.size() < instance.config.getInt("config.minPlayers")){
 				GameStarter.cancel();
-
 				sendMsg(ChatComponent.create("§7Lancement de la partie annulé !"));
 				for(GPlayer gp2 : instance.pList.values()) {
 				    gp.p.getInventory().setItem(0,null);
@@ -273,7 +253,7 @@ public class Main extends JavaPlugin {
 			for(GPlayer gplayer : instance.pList.values()){
 				Player p = gplayer.p;
 				SBManager scoreboard = new SBManager(p);
-				scoreboard.sendWaitingLine();
+				scoreboard.setWaitMode();
 				scoreboard.set();
 				boards.put(p,scoreboard);
 			}
@@ -297,7 +277,7 @@ public class Main extends JavaPlugin {
 			scoreboard.refreshWaiting();
 		}
 		SBManager scoreboard = new SBManager(p);
-		scoreboard.sendWaitingLine();
+		scoreboard.setWaitMode();
 		scoreboard.set();
 		boards.put(p,scoreboard);
 
