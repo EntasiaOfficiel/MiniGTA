@@ -11,18 +11,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 
 public class PlayerInteract implements Listener {
+
+
 
 
 	@EventHandler
@@ -100,5 +105,19 @@ public class PlayerInteract implements Listener {
 	@EventHandler
 	public static void onInvClick(InventoryClickEvent e) {
 		if (Main.instance.pList.containsKey(e.getWhoClicked().getName()) && e.getSlotType() == InventoryType.SlotType.ARMOR || Main.instance.pList.containsKey(e.getWhoClicked().getName()) && !Main.instance.hasStarted()) e.setCancelled(true);
+		ItemStack item = e.getCurrentItem();
+		if(Main.instance.pList.containsKey(e.getWhoClicked().getName())){
+			if(item.getType().equals(Material.IRON_TRAPDOOR)){
+				if(e.getWhoClicked().getInventory().contains(Material.IRON_TRAPDOOR)){
+					if(e.getAction()== InventoryAction.MOVE_TO_OTHER_INVENTORY || e.getAction() == InventoryAction.PICKUP_ALL && e.getClickedInventory()!= e.getWhoClicked().getInventory()){
+						e.setCancelled(true);
+						e.getWhoClicked().sendMessage("§cTu ne peux avoir qu'un C4 maximum");
+
+					}
+				}
+			}
+		}
 	}
+
+
 }

@@ -16,16 +16,23 @@ import fr.entasia.minigta.utils.BreakedBlock;
 import fr.entasia.minigta.utils.GPlayer;
 import fr.entasia.minigta.utils.GState;
 import fr.entasia.minigta.utils.SBManager;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.minecraft.server.v1_15_R1.EnumHand;
+import net.minecraft.server.v1_15_R1.PacketDataSerializer;
+import net.minecraft.server.v1_15_R1.PacketPlayOutCustomPayload;
+import net.minecraft.server.v1_15_R1.PacketPlayOutOpenBook;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -216,6 +223,7 @@ public class Main extends JavaPlugin {
 		if(gp.pack){
 			gp.p.setResourcePack("https://www.dropbox.com/s/2y4y9qxdl5w35db/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
 		}
+		gp.p.setGlowing(false);
 		String c = gp.getColor();
 		pList.remove(gp.p.getName());
 		BlueTeam.remove(gp.p.getName());
@@ -353,6 +361,7 @@ public class Main extends JavaPlugin {
 		bookMeta.spigot().addPage(page2);
 		item.setItemMeta(bookMeta);
 
+		p.openBook(item);
 		Inv.setItem(4,item);
 
 
@@ -395,6 +404,8 @@ public class Main extends JavaPlugin {
 			Inv.setItem(0,item);
 		}
 	}
+
+
 
 	private void setChest() {
 
@@ -517,6 +528,7 @@ public class Main extends JavaPlugin {
 		for (GPlayer gp : pList.values()){
 			gp.p.getActivePotionEffects().clear();
 			EGUtils.tpSpawn(gp.p);
+			gp.p.setGlowing(false);
 			if(gp.pack){
 				gp.p.setResourcePack("https://www.dropbox.com/s/2y4y9qxdl5w35db/nopack.zip?dl=1","1E7D4C9E43EBEA35C7BF730200121EDC");
 			}

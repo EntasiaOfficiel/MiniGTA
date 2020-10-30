@@ -77,7 +77,7 @@ public class PlayerListener implements Listener {
 						return;
 					}
 
-					if(b.getRelative(BlockFace.DOWN).getType()== Material.AIR){
+					if(b.getRelative(BlockFace.DOWN).getType()== Material.AIR || !b.getRelative(BlockFace.DOWN).getType().isSolid()){
 
 						Openable a = (Openable) e.getBlockPlaced().getBlockData();
 						a.setOpen(true);
